@@ -9,11 +9,12 @@ import { NetAPITools } from "../Common/NetAPITools";
 import { NodeReferences } from "../Common/NodeReferences";
 import { ReadyButton } from "../Common/ReadyButton";
 import { TouchEventProxy } from "../Common/TouchEventProxy";
-import { InterestingBilliardBall } from "./InterestingBilliardBall";
+import { FingerMarbleBall } from "./FingerMarbleBall";
 import { InterestingBilliardGamingState, SyncTouchEndData, InterestingBilliardSyncEvent, NoticeType } from "./InterestingBilliardTypes";
 import { BoardClock } from "../Common/BoardClock";
-import { InterestingBilliardCue } from "./InterestingBilliardCue";
+import { FingerMarbleCue } from "./FingerMarbleCue";
 import { IntBilPlayerSeat } from "./IntBilPlayerSeat";
+import { Debug } from "../../../Libraries/Utility/Debug";
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -22,6 +23,7 @@ const { ccclass, property, executionOrder } = _decorator;
 export class FingerMarbleUIController extends Component
 {
 
+    private debugTag:string = "FingerMarbleUIController";
     @property(NodeReferences)
     public canvasReferences: NodeReferences;
     @property(ReadyButton)
@@ -37,11 +39,10 @@ export class FingerMarbleUIController extends Component
 
     @property(Node)
     public playerAvatarGridNode: Node;
-    @property(InterestingBilliardCue)
-    public cueNode: InterestingBilliardCue;//球杆
-    public mainBall: InterestingBilliardBall;//主球
-    public subBalls: List<InterestingBilliardBall> = new List<InterestingBilliardBall>;//子球
-    public lineNode: Node; //辅助线
+    @property(FingerMarbleCue)
+    public cueNode: FingerMarbleCue;//球杆
+    public mainBall: FingerMarbleBall;//主球
+    public subBalls: List<FingerMarbleBall> = new List<FingerMarbleBall>;//子球
 
     @property(Graphics)
     public graphicsPanel: Graphics;
@@ -187,7 +188,7 @@ export class FingerMarbleUIController extends Component
     protected start(): void
     {
         Validator.IsObjectIllegal(this.canvasReferences, "canvasReferences");
-        // this.mainBall = this.canvasReferences.GetVisual<InterestingBilliardBall>("ScreenTable/BallPanel/MainBall", InterestingBilliardBall);
+       
         // this.descriptionDlg = this.canvasReferences.GetNode("GameDescriptionDlg");
         // this.settingDlg = this.canvasReferences.GetNode("GameSettingDlg");
 
@@ -205,10 +206,12 @@ export class FingerMarbleUIController extends Component
         // this.gamingIconGlow2 = this.canvasReferences.GetVisual<Sprite>("ClientPlayer/PlayerAvatar2/Sprite", Sprite);
 
         this.camera = this.canvasReferences.GetVisual<Camera>("Camera", Camera);
-        // for (let index = 1; index <= 10; index++)
-        // {
-        //     this.subBalls.Add(this.canvasReferences.GetVisual<InterestingBilliardBall>("ScreenTable/BallPanel/MainBall-" + index, InterestingBilliardBall));
-        // }
+        var ballNodes:Node[] = this.canvasReferences.GetNode("ScreenTable/Balls").children;
+        for (let index = 0; index < ballNodes.length; index++)
+        {
+            this.subBalls.Add(ballNodes[index].getComponent<FingerMarbleBall>(FingerMarbleBall));
+        }
+         this.mainBall = this.subBalls.items[0];
         // this.disableAllSubBallLabel();
 
         // this.gamingPlayerTip.active = false;
@@ -250,7 +253,6 @@ export class FingerMarbleUIController extends Component
     public SetLineNodeEnable(enable: boolean)
     {
         this.graphicsPanel.clear();
-        this.lineNode.active = false;
     }
 
     //设置子球UI
@@ -522,10 +524,6 @@ export class FingerMarbleUIController extends Component
         //换算成角度
         var angle: number = this.cueNode.GetCueAngle(this.GetThetaFromMainBallToTouchPos(touchPos), this.mainBallWorldSpacePos, this.touchWorldSpacePos);
         this.cueNode.SetRotationFromEuler(angle);
-        //设置辅助线坐标
-        this.lineNode.setWorldPosition(new Vec3(this.mainBallWorldSpacePos.x, this.mainBallWorldSpacePos.y, this.mainBallWorldSpacePos.z));
-        //设置辅助线角度
-        this.lineNode.setRotationFromEuler(0, 0, angle);
         //射线检测
 
     }
@@ -552,8 +550,7 @@ export class FingerMarbleUIController extends Component
     //球杆推球
     public StartPushCue(subgameId: string, isGamingPlayer: boolean, mainBallForce: Vec2 = new Vec2())
     {
-        this.SetLineNodeEnable(false);
-        this.mainBall.ResetLinearDamping();
+        Debug.Log("StartPushCue",this.debugTag);
         this.subBalls.items.forEach(subBall =>
         {
             subBall.ResetLinearDamping();
@@ -578,17 +575,17 @@ export class FingerMarbleUIController extends Component
             var baseForceY: number = (this.mainBallWorldSpacePos.y - this.touchWorldSpacePos.y);
             var baseForceX: number = (this.mainBallWorldSpacePos.x - this.touchWorldSpacePos.x);
             var SyncMainBallForce = new Vec2(baseForceX, baseForceY);
-
+            Debug.Log(SyncMainBallForce);
             this.scheduleOnce(() =>
             {
                 this.SetAllBallBigDamp();
                 this.mainBall.SetForce(SyncMainBallForce);
                 EventManager.Emit("IntBilGamingStateChange", InterestingBilliardGamingState.BallRunning);
             }, 0.1);
-            var syncTouchEndData: SyncTouchEndData = {
-                mainBallForce: SyncMainBallForce
-            };
-            NetAPITools.SendNotice(subgameId, InterestingBilliardSyncEvent.IntBilSyncTouchEnd, syncTouchEndData, NoticeType.Others);
+            // var syncTouchEndData: SyncTouchEndData = {
+            //     mainBallForce: SyncMainBallForce
+            // };
+            // NetAPITools.SendNotice(subgameId, InterestingBilliardSyncEvent.IntBilSyncTouchEnd, syncTouchEndData, NoticeType.Others);
         });
     }
 
@@ -656,7 +653,7 @@ export class FingerMarbleUIController extends Component
         }
     }
 
-    private ResetPlayerSeat(playerUI: InterestingBilliardBall): void
+    private ResetPlayerSeat(playerUI: FingerMarbleBall): void
     {
         if (Validator.IsObjectIllegal(playerUI, "playerUI")) return;
         playerUI.avatarSprite.spriteFrame = this.emptyHeadIcon;

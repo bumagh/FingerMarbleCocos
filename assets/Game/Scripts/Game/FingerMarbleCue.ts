@@ -2,8 +2,8 @@ import { Color, Component, Graphics, Label, Sprite, SpriteFrame, Vec2, Vec3, _de
 
 const { ccclass, property } = _decorator;
 
-@ccclass("InterestingBilliardCue")
-export class InterestingBilliardCue extends Component {
+@ccclass("FingerMarbleCue")
+export class FingerMarbleCue extends Component {
     @property(Sprite)
     public avatarSprite: Sprite;
     public resetPos: Vec3 = new Vec3();

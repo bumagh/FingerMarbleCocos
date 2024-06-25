@@ -1,11 +1,10 @@
 import { CCBoolean, CircleCollider2D, Collider2D, Color, Component, Label, Node, Quat, RigidBody2D, Sprite, UITransform, Vec2, Vec3, _decorator } from 'cc';
-import { IntBilLight } from './IntBilLight';
 import { Gender } from '../Common/Enums';
 import { PlayerState } from '../../../Framework/PartyTemplate/Player/Player';
 const { ccclass, property } = _decorator;
 
-@ccclass("InterestingBilliardBall")
-export class InterestingBilliardBall extends Component
+@ccclass("FingerMarbleBall")
+export class FingerMarbleBall extends Component
 {
     @property(Sprite)
     public avatarSprite: Sprite;
@@ -20,8 +19,6 @@ export class InterestingBilliardBall extends Component
 
     @property(Node)
     public lightNode: Node;
-    @property(IntBilLight)
-    public intBilLight: IntBilLight;
     public playerId: string = null;
     public gender: Gender = Gender.Male;
     public resetPos: Vec3 = new Vec3();

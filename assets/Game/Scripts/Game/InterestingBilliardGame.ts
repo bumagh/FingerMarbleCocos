@@ -4,7 +4,7 @@ import { Player } from "../../../Framework/PartyTemplate/Player/Player";
 import { Subgame } from "../../../Framework/PartyTemplate/Subgame/Subgame";
 import { List } from "../../../Libraries/Utility/List";
 import { IPartialPlayerList, IIsClientPlayerHost } from "../Interfaces/Interfaces";
-import { InterestingBilliardBall } from "./InterestingBilliardBall";
+import { InterestingBilliardBall } from "./FingerMarbleBall";
 import { InterestingBilliardGamingState, IntBilTempData } from "./InterestingBilliardTypes";
 
 

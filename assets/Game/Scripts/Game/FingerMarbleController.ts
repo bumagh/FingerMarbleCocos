@@ -15,7 +15,7 @@ import { PipelineContext } from "../../../Libraries/Utility/PipelineContext";
 import { Validator } from "../../../Libraries/Utility/Validator";
 import { NoticeType } from "../Common/Enums";
 import { TouchEventProxy } from "../Common/TouchEventProxy";
-import { InterestingBilliardBall } from "./InterestingBilliardBall";
+import { FingerMarbleBall } from "./FingerMarbleBall";
 import { InterestingBilliardGame } from "./InterestingBilliardGame";
 import { SettlementConfirmType, SyncSettlementData, InterestingBilliardGamingState, SyncTouchPosData, InterestingBilliardSyncEvent, BilliardAudioState, SyncSubBallFallData, SettlementType, SyncSettlementTipData, SettlementTipType, SettlementTipEnum, IntBilEvents, IntBilEndData, SyncTouchEndData, IntBilTempData } from "./InterestingBilliardTypes";
 import { Tools } from "../Common/Tools";
@@ -242,7 +242,7 @@ export class FingerMarbleController extends SubgameController
             //处理玩家当前轮次结算记录
             //进入结算状态
             if (!this.subgame.curRoundFallBalls.Exists(ball => ball.isMainBall == true))
-                this.subgame.curRoundFallBalls.Add(otherCollider.node.getComponent<InterestingBilliardBall>(InterestingBilliardBall));
+                this.subgame.curRoundFallBalls.Add(otherCollider.node.getComponent<FingerMarbleBall>(FingerMarbleBall));
             otherCollider.node.getComponent<RigidBody2D>(RigidBody2D).linearVelocity = new Vec2(0, 0);
 
             this.scheduleOnce(() => otherCollider.node.setPosition(this.gameUIController.resetMainBallWorldSpacePos), 0.4);
@@ -254,7 +254,7 @@ export class FingerMarbleController extends SubgameController
             EventManager.Emit("InterestingBilliardAudioPlay", BilliardAudioState.BallFall);
             //处理玩家当前轮次结算记录
             if (!this.subgame.curRoundFallBalls.Exists(ball => ball.isMainBall == false))
-                this.subgame.curRoundFallBalls.Add(otherCollider.node.getComponent<InterestingBilliardBall>(InterestingBilliardBall));
+                this.subgame.curRoundFallBalls.Add(otherCollider.node.getComponent<FingerMarbleBall>(FingerMarbleBall));
             otherCollider.node.getComponent<RigidBody2D>(RigidBody2D).linearVelocity = new Vec2(0, 0);
             var randPosX = -100000;
             var randPosY = -100000;
