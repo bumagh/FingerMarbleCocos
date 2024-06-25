@@ -24,10 +24,6 @@ export class FingerMarbleUIController extends Component
 
     @property(NodeReferences)
     public canvasReferences: NodeReferences;
-
-    @property(Node)
-    public touchArea: Node;
-
     @property(ReadyButton)
     public readyButton: ReadyButton;
 

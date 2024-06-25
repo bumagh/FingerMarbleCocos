@@ -40,7 +40,6 @@ export class FingerMarbleController extends SubgameController
     private subBallFallPos: Vec3 = new Vec3();
     private MOVE_SYNC_RATE: number = 2;//触控同步频率
     private MAXTIMER = 65;
-    private localMode: boolean = sys.platform==sys.Platform.EDITOR_PAGE;
     protected onLoad(): void
     {
         super.onLoad();
@@ -163,10 +162,11 @@ export class FingerMarbleController extends SubgameController
         */
     private OnTouchAreaTouched(proxy: TouchEventProxy, event: EventTouch): void
     {
-        if(this.localMode){
-            this.gameUIController.ShowCueSetting(event.getLocation());
-            this.subgame.touchTimer = 0;
-            this.subgame.touchStarted = true;
+        if(Tools.IsLocalMode()){
+            // this.gameUIController.ShowCueSetting(event.getLocation());
+            // this.subgame.touchTimer = 0;
+            // this.subgame.touchStarted = true;
+            Debug.Log("test");
             return;
         }
         if (this.subgame.state != SubgameState.Gaming) return;
@@ -189,7 +189,7 @@ export class FingerMarbleController extends SubgameController
     */
     private OnTouchAreaTouchMove(proxy: TouchEventProxy, event: EventTouch): void
     {
-        if(this.localMode){
+        if(Tools.IsLocalMode()){
             this.gameUIController.ShowCueSetting(event.getLocation());
             return;
         }
@@ -213,7 +213,7 @@ export class FingerMarbleController extends SubgameController
 
     private OnTouchAreaTouchEnd(proxy: TouchEventProxy, event: EventTouch): void
     {
-        if(this.localMode){
+        if(Tools.IsLocalMode()){
             this.subgame.touchStarted = false;
             //同步本地到其他玩家
             this.gameUIController.StartPushCue(this.subgameId, true);
