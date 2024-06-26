@@ -6,7 +6,6 @@ import { CommonEventType } from '../Common/CommonEventType';
 import { Tools } from '../Common/Tools';
 import { Debug } from '../../../Libraries/Utility/Debug';
 import { Validator } from '../../../Libraries/Utility/Validator';
-
 import { TouchEventProxy } from '../Common/TouchEventProxy';
 import { WXTools } from '../Common/Platform/WXTools';
 const { ccclass, property, executionOrder } = _decorator;
@@ -92,29 +91,32 @@ export class LoginController extends Component
     private Init(): void
     {
         if (!Tools.IsInLoginScene()) return;
-
-        var enterOptions = wx.getEnterOptionsSync();
-        var merchantId = enterOptions.query["merid"];
-        var numbers = enterOptions.query["numbers"];
-        this.loginUIController.logoPanel.active = false;
-        this.loginUIController.choseGenderPanel.active = false;
+        // var enterOptions = wx.getEnterOptionsSync();
+        // var merchantId = enterOptions.query["merid"];
+        // var numbers = enterOptions.query["numbers"];
+        // this.scheduleOnce(() => {
+        //     this.loginUIController.logoPanel.active = false;
+        //     this.loginUIController.choseGenderPanel.active = false;
+        // }, 2);
+       
 
         switch (this.loginOpenState)
         {
             case LoginOpenState.None:
-                if (!Validator.IsStringEmpty(merchantId) && !Validator.IsStringEmpty(numbers))
-                {
-                    Debug.Log(`被邀请成功，房间为：${numbers}`, this.debugTag);
-                    this.hasEnterQuery = true;
-                    sys.localStorage.setItem("MerchantId", merchantId);
-                    sys.localStorage.setItem("ArcadeNumbers", numbers);
-                    EventManager.Emit("StartLogin");
-                }
-                else
-                {
-                    this.loginUIController.logoPanel.active = true;
-                    this.scheduleOnce(() => EventManager.Emit("StartLogin"), 0.2);
-                }
+                // if (!Validator.IsStringEmpty(merchantId) && !Validator.IsStringEmpty(numbers))
+                // {
+                //     Debug.Log(`被邀请成功，房间为：${numbers}`, this.debugTag);
+                //     this.hasEnterQuery = true;
+                //     sys.localStorage.setItem("MerchantId", merchantId);
+                //     sys.localStorage.setItem("ArcadeNumbers", numbers);
+                //     EventManager.Emit("StartLogin");
+                // }
+                // else
+                // {
+                //     this.loginUIController.logoPanel.active = true;
+                //     this.scheduleOnce(() => EventManager.Emit("StartLogin"), 0.2);
+                // }
+                EventManager.Emit("OnLoginAPISuccess");
                 break;
 
             case LoginOpenState.Normal:
@@ -155,7 +157,9 @@ export class LoginController extends Component
 
     private OnLoginAPISuccess(): void
     {
-        if (!Tools.IsInLoginScene()) return;
+        // if (!Tools.IsInLoginScene()) return;
+        this.TryLoadArcadeScene();
+        return;
         if (this.hasEnterQuery)
         {
             this.RequestEnterRoomAPI(sys.localStorage.getItem("ArcadeNumbers"));
@@ -303,12 +307,9 @@ export class LoginController extends Component
     {
         this.scheduleOnce(() =>
         {
-            var bundlesLoaded = Architecture.instance.AreBundlesLoaded();
-            var prefabCreated = Architecture.instance.ArePrefabCreated();
             var arcadeScenePreloaded = Architecture.instance.IsArcadeScenePreloaded();
-            var logoSpriteLoaded = this.loginUIController.logoSprite.spriteFrame != null;
 
-            var loadArcade = bundlesLoaded && prefabCreated && arcadeScenePreloaded && logoSpriteLoaded;
+            var loadArcade =  arcadeScenePreloaded;
             if (loadArcade)
                 director.loadScene("Arcade", (err, scene) =>
                 {
@@ -318,7 +319,7 @@ export class LoginController extends Component
                 });
             else
                 this.TryLoadArcadeScene();
-        }, 0.2);
+        }, 1);
     }
 
     private OnUserInfoButtonTapped(): void

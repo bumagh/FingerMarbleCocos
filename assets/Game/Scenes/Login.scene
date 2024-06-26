@@ -26,13 +26,13 @@
         "__id__": 41
       },
       {
-        "__id__": 43
+        "__id__": 44
       }
     ],
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 45
+      "__id__": 47
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -63,9 +63,9 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 46
+      "__id__": 48
     },
-    "_id": "41763349-f0a2-4d42-8b6e-15e237c9c112"
+    "_id": "93a52dd9-03ad-4214-8f0a-a897647904f3"
   },
   {
     "__type__": "cc.Node",
@@ -521,7 +521,7 @@
         "__id__": 23
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 26
@@ -1541,6 +1541,9 @@
     "_components": [
       {
         "__id__": 42
+      },
+      {
+        "__id__": 43
       }
     ],
     "_prefab": null,
@@ -1587,6 +1590,18 @@
     "_id": "d3cBShhlNMrblnD3GevC4b"
   },
   {
+    "__type__": "2d2aaKZXoJGg5ZLh+it3Pcs",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 41
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "_id": "78OL/P+RdAYYzkvm2cNZkP"
+  },
+  {
     "__type__": "cc.Node",
     "_name": "Architecture",
     "_objFlags": 0,
@@ -1598,7 +1613,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 44
+        "__id__": 45
+      },
+      {
+        "__id__": 46
       }
     ],
     "_prefab": null,
@@ -1637,16 +1655,31 @@
     "_objFlags": 0,
     "__editorExtras__": {},
     "node": {
-      "__id__": 43
+      "__id__": 44
     },
     "_enabled": true,
     "__prefab": null,
-    "OSSUrl": "",
+    "OSSUrl": "https://tbboss.wujinongpi.cn",
+    "subgameId": {
+      "__uuid__": "c8d45256-3169-4991-8922-677c52d6de0b",
+      "__expectedType__": "cc.JsonAsset"
+    },
     "consoleIgnores": [],
     "bundleNames": [],
     "enableTestAccount": false,
-    "testMerchantId": "1",
     "_id": "b5kT87nCVGrqDRhi6QQRWx"
+  },
+  {
+    "__type__": "2d2aaKZXoJGg5ZLh+it3Pcs",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 44
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "_id": "72FCa5lkZEoZ7P+7LeNWc/"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -1659,28 +1692,28 @@
   {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 47
-    },
-    "shadows": {
-      "__id__": 48
-    },
-    "_skybox": {
       "__id__": 49
     },
-    "fog": {
+    "shadows": {
       "__id__": 50
     },
-    "octree": {
+    "_skybox": {
       "__id__": 51
     },
-    "skin": {
+    "fog": {
       "__id__": 52
     },
-    "lightProbeInfo": {
+    "octree": {
       "__id__": 53
     },
-    "postSettings": {
+    "skin": {
       "__id__": 54
+    },
+    "lightProbeInfo": {
+      "__id__": 55
+    },
+    "postSettings": {
+      "__id__": 56
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false

@@ -46,10 +46,10 @@ export class Architecture extends Component
         this.SetSubgameMap();
 
         this.InitEventManager();
-        this.InitWebSocketManager();
-        this.InitNetworkAPIManager();
-        this.InitRemoteImageManager();
-        this.DecodeUrlScheme();
+        // this.InitWebSocketManager();
+        // this.InitNetworkAPIManager();
+        // this.InitRemoteImageManager();
+        // this.DecodeUrlScheme();
         this.InitPipelines();
         this.LoadBundles();
     }
@@ -116,26 +116,25 @@ export class Architecture extends Component
         // new IntBilStartPipeline().OnEnable();
         // new IntBilGamingPipeline().OnEnable();
         // new IntBilEndPipeline().OnEnable();
-
-
         PipelineScheduleFunction.scheduleOnce = (callback: any, delay?: number) => this.scheduleOnce(callback, delay);
     }
 
     private LoadBundles(): void
     {
-        for (let i = 0; i < this.bundleNames.length; i++)
-        {
-            const bundleName = this.bundleNames[i];
-            assetManager.loadBundle(bundleName, (err, bundle) =>
-            {
-                Architecture.instance.bundles.set(bundleName, bundle);
-                if (Architecture.instance.AreBundlesLoaded())
-                {
-                    Architecture.instance.CreatePrefabs();
-                    this.PreloadArcadeScene();
-                }
-            });
-        }
+        // for (let i = 0; i < this.bundleNames.length; i++)
+        // {
+        //     const bundleName = this.bundleNames[i];
+        //     assetManager.loadBundle(bundleName, (err, bundle) =>
+        //     {
+        //         Architecture.instance.bundles.set(bundleName, bundle);
+        //         if (Architecture.instance.AreBundlesLoaded())
+        //         {
+        //             Architecture.instance.CreatePrefabs();
+        //             this.PreloadArcadeScene();
+        //         }
+        //     });
+        // }
+        this.PreloadArcadeScene();
     }
 
     private PreloadArcadeScene(): void
@@ -155,15 +154,6 @@ export class Architecture extends Component
      */
     private CreatePrefabs(): void
     {
-        // this.CreatePrefabFromBundle("Common", "CommonAudioController");
-        // this.CreatePrefabFromBundle("Dialogs", "RankList/RankListDlg");
-        // this.CreatePrefabFromBundle("Dialogs", "RankList/RankListTeamDlg");
-        // this.CreatePrefabFromBundle("Dialogs", "TipDlg/TipDlg");
-        // this.CreatePrefabFromBundle("Dialogs", "TipDlg/SimpleTipDlg");
-        // this.CreatePrefabFromBundle("Dialogs", "MessageDlg/MessageDlg");
-        // this.CreatePrefabFromBundle("Dialogs", "TipDlg/ConfirmDlg");
-        // this.CreatePrefabFromBundle("Dialogs", "OfflineTipDlg/OfflineTipDlg");
-
         this.prefabsCreated = true;
     }
 

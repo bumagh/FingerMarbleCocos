@@ -1,5 +1,6 @@
 import { Sprite, assetManager, ImageAsset, SpriteFrame, Texture2D, director, sys } from "cc";
 import { Validator } from "../../../Libraries/Utility/Validator";
+import { Debug } from "../../../Libraries/Utility/Debug";
 
 export class Tools {
     /**

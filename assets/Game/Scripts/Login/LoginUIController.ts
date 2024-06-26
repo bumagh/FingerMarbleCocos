@@ -24,8 +24,8 @@ export class LoginUIController extends Component
 
     protected start(): void
     {
-        var defaultLogoUrl = `${Tools.GetOSSUrl()}/images/logo.png`;
-        EventManager.Emit("SetRemoteSpriteFrame", "Login", "logo", this.logoSprite, defaultLogoUrl);
+        // var defaultLogoUrl = `${Tools.GetOSSUrl()}/images/logo.png`;
+        // EventManager.Emit("SetRemoteSpriteFrame", "Login", "logo", this.logoSprite, defaultLogoUrl);
     }
 
     public ShowArcadeName(name: string): void
