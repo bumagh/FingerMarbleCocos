@@ -110,6 +110,8 @@ export class FingerMarbleController extends SubgameController
     {
         super.start();
         // this.gameUIController.boardClock.SetClockState(false);
+        //模拟机器人进入房间
+        //界面更新
     }
 
 

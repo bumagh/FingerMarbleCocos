@@ -23,7 +23,7 @@ const { ccclass, property, executionOrder } = _decorator;
 export class FingerMarbleUIController extends Component
 {
 
-    private debugTag:string = "FingerMarbleUIController";
+    private debugTag: string = "FingerMarbleUIController";
     @property(NodeReferences)
     public canvasReferences: NodeReferences;
     @property(ReadyButton)
@@ -188,7 +188,7 @@ export class FingerMarbleUIController extends Component
     protected start(): void
     {
         Validator.IsObjectIllegal(this.canvasReferences, "canvasReferences");
-       
+
         // this.descriptionDlg = this.canvasReferences.GetNode("GameDescriptionDlg");
         // this.settingDlg = this.canvasReferences.GetNode("GameSettingDlg");
 
@@ -206,12 +206,12 @@ export class FingerMarbleUIController extends Component
         // this.gamingIconGlow2 = this.canvasReferences.GetVisual<Sprite>("ClientPlayer/PlayerAvatar2/Sprite", Sprite);
 
         this.camera = this.canvasReferences.GetVisual<Camera>("Camera", Camera);
-        var ballNodes:Node[] = this.canvasReferences.GetNode("ScreenTable/Balls").children;
+        var ballNodes: Node[] = this.canvasReferences.GetNode("ScreenTable/Balls").children;
         for (let index = 0; index < ballNodes.length; index++)
         {
             this.subBalls.Add(ballNodes[index].getComponent<FingerMarbleBall>(FingerMarbleBall));
         }
-         this.mainBall = this.subBalls.items[0];
+        this.mainBall = this.subBalls.items[0];
         // this.disableAllSubBallLabel();
 
         // this.gamingPlayerTip.active = false;
@@ -550,7 +550,7 @@ export class FingerMarbleUIController extends Component
     //球杆推球
     public StartPushCue(subgameId: string, isGamingPlayer: boolean, mainBallForce: Vec2 = new Vec2())
     {
-        Debug.Log("StartPushCue",this.debugTag);
+
         this.subBalls.items.forEach(subBall =>
         {
             subBall.ResetLinearDamping();
@@ -575,12 +575,13 @@ export class FingerMarbleUIController extends Component
             var baseForceY: number = (this.mainBallWorldSpacePos.y - this.touchWorldSpacePos.y);
             var baseForceX: number = (this.mainBallWorldSpacePos.x - this.touchWorldSpacePos.x);
             var SyncMainBallForce = new Vec2(baseForceX, baseForceY);
-            Debug.Log(SyncMainBallForce);
             this.scheduleOnce(() =>
             {
                 this.SetAllBallBigDamp();
                 this.mainBall.SetForce(SyncMainBallForce);
                 EventManager.Emit("IntBilGamingStateChange", InterestingBilliardGamingState.BallRunning);
+                this.SetLineNodeEnable(false);
+                this.cueNode.node.active = false;
             }, 0.1);
             // var syncTouchEndData: SyncTouchEndData = {
             //     mainBallForce: SyncMainBallForce

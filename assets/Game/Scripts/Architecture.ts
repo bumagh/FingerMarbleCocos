@@ -24,14 +24,9 @@ export class Architecture extends Component
     @property([CCString])
     private bundleNames: string[] = []
 
-    @property(CCString)
-    private sceneBundle: string;
 
     @property(CCBoolean)
     private enableTestAccount: boolean = false;
-
-    @property(CCString)
-    private testMerchantId = "1";
 
     private bundles = new Map<string, AssetManager.Bundle>();
     private prefabsCreated: boolean = false;
@@ -114,7 +109,6 @@ export class Architecture extends Component
         // sys.localStorage.setItem("MerchantId", scene);
 
         // test
-        sys.localStorage.setItem("MerchantId", this.testMerchantId);
     }
 
     private InitPipelines(): void
@@ -193,18 +187,18 @@ export class Architecture extends Component
 
     private LoadSceneFromBundle(sceneName: string): void
     {
-        if (Validator.IsStringIllegal(sceneName, "sceneName")) return;
-        if (Validator.IsStringIllegal(this.sceneBundle, "this.sceneBundle")) return;
-        if (!Architecture.instance.bundles.has(this.sceneBundle))
-        {
-            Debug.Error(`未找到bundle: ${this.sceneBundle}`);
-            return;
-        }
-        var bundle = Architecture.instance.bundles.get(this.sceneBundle);
-        bundle.loadScene(sceneName, (err, data) =>
-        {
-            director.runScene(data);
-        });
+        // if (Validator.IsStringIllegal(sceneName, "sceneName")) return;
+        // if (Validator.IsStringIllegal(this.sceneBundle, "this.sceneBundle")) return;
+        // if (!Architecture.instance.bundles.has(this.sceneBundle))
+        // {
+        //     Debug.Error(`未找到bundle: ${this.sceneBundle}`);
+        //     return;
+        // }
+        // var bundle = Architecture.instance.bundles.get(this.sceneBundle);
+        // bundle.loadScene(sceneName, (err, data) =>
+        // {
+        //     director.runScene(data);
+        // });
     }
 
     public AreBundlesLoaded(): boolean
