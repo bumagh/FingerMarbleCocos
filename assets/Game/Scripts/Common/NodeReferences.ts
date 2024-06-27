@@ -27,22 +27,22 @@ export class NodeReferences extends Component
 
     protected onLoad(): void
     {
-        // EventManager.Emit("NodeReferencesOnLoad", this);
+        EventManager.Emit("NodeReferencesOnLoad", this);
     }
 
     protected onEnable(): void
     {
-        // EventManager.Emit("NodeReferencesOnEnable", this);
+        EventManager.Emit("NodeReferencesOnEnable", this);
     }
 
     protected onDisable(): void
     {
-        // EventManager.Emit("NodeReferencesOnDisable", this);
+        EventManager.Emit("NodeReferencesOnDisable", this);
     }
 
     protected onDestroy(): void
     {
-        // EventManager.Emit("NodeReferencesOnDestroy", this);
+        EventManager.Emit("NodeReferencesOnDestroy", this);
     }
 
     public GetNode(nodePath: string, callback?: (node: Node) => void): Node | null
