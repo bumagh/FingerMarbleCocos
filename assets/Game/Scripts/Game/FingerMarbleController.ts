@@ -693,7 +693,7 @@ export class FingerMarbleController extends SubgameController
         if (this.subgameId != context.gameId) return;
         this.AddPlayer(this.subgame, context);
         if (this.subgame.state != SubgameState.Gaming)
-            this.gameUIController.UpdatePlayerSeats(this.subgame.partialPlayerList.items);
+            this.gameUIController.UpdateHorizPlayers(this.subgame.partialPlayerList.items, this.subgame.hostId);
         else
             this.gameUIController.UpdatePlayerSeats(this.subgame.partialPlayerList.FindAll(p => p.state == PlayerState.Gaming));
         context.StageComplete();

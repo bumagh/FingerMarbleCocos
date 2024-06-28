@@ -4,7 +4,7 @@ import { Algorithm } from "../../../Libraries/Utility/Algorithm";
 import { EventManager } from "../../../Libraries/Utility/EventManager";
 import { List } from "../../../Libraries/Utility/List";
 import { Validator } from "../../../Libraries/Utility/Validator";
-import { Gender } from "../Common/Enums";
+import { Gender, Team } from "../Common/Enums";
 import { NetAPITools } from "../Common/NetAPITools";
 import { NodeReferences } from "../Common/NodeReferences";
 import { ReadyButton } from "../Common/ReadyButton";
@@ -15,6 +15,7 @@ import { BoardClock } from "../Common/BoardClock";
 import { FingerMarbleCue } from "./FingerMarbleCue";
 import { IntBilPlayerSeat } from "./IntBilPlayerSeat";
 import { Debug } from "../../../Libraries/Utility/Debug";
+import { FingerMarbleTeamBoard } from "./FingerMarbleBoard";
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -41,6 +42,7 @@ export class FingerMarbleUIController extends Component
     public playerAvatarGridNode: Node;
     @property(FingerMarbleCue)
     public cueNode: FingerMarbleCue;//球杆
+    public teamBoard: FingerMarbleTeamBoard;
     public mainBall: FingerMarbleBall;//主球
     public subBalls: List<FingerMarbleBall> = new List<FingerMarbleBall>;//子球
 
@@ -71,6 +73,7 @@ export class FingerMarbleUIController extends Component
 
         EventManager.On("onCloseSettingDlg", this.onCloseSettingDlg, this);
         EventManager.On("onOpenSettingDlg", this.onOpenSettingDlg, this);
+        this.teamBoard = this.canvasReferences.GetVisual("GameUI/PlayerBoard",FingerMarbleTeamBoard);
     }
 
     protected onDestroy(): void
@@ -747,4 +750,65 @@ export class FingerMarbleUIController extends Component
     {
         this.playerAvatarGridNode.active = show;
     }
+    public SetTeamBoardPlayer(player: Player, seatIndex: number, isHost: boolean)
+    {
+        if (Validator.IsObjectEmpty(player)) return;
+        this.teamBoard.SetHorizPlayer(player, seatIndex, isHost);
+    }
+
+    public ResetTeamBoard(playerId: string): void
+    {
+        this.teamBoard.ExistPlayerIdInPlayers(playerId) && this.teamBoard.ResetAllHorizPlayer();
+    }
+    public ResetTeamBoardScore()
+    {
+        this.teamBoard.ResetAllScore();
+    }
+    public ResetAllTeamBoard()
+    {
+        this.teamBoard.ResetAll();
+    }
+
+    public HideAllStateLabel()
+    {
+        this.teamBoard.HideAllStateLabel();
+    }
+    public ResetAllHorizPlayers()
+    {
+        this.teamBoard.ResetAllHorizPlayer();
+    }
+    /**
+     * 更新面板玩家UI
+     * @param players 
+     * @param hostId 
+     * @returns 
+     */
+    public UpdateHorizPlayers(players: Player[], hostId: string)
+    {
+        Debug.Log(players)
+        if (Validator.IsObjectIllegal(players, "players")) return;
+        // players.sort((a, b) => a.seatIndex - b.seatIndex);
+        this.ResetAllHorizPlayers();
+        for (let index = 0; index < players.length; index++)
+        {
+            const player = players[index];
+            if (Validator.IsStringEmpty(player.id)) continue;
+            this.SetTeamBoardPlayer(player, index, player.id == hostId);
+        }
+    }
+    public SetHorizPlayerScore(playerId: string, team: Team, score: number)
+    {
+     
+            var horizPlayer = this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId);
+            if (horizPlayer != undefined)
+            {
+                horizPlayer?.score.AddScore(score);
+            }
+    }
+
+    public SetHorizPlayerStateLabel(playerId: string, playerState: PlayerState, isHost: boolean)
+    {
+            this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId) != undefined && this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId).ChangePlayerState(playerState, isHost);
+    }
+
 }
