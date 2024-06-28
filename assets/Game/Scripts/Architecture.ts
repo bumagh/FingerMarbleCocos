@@ -4,6 +4,8 @@ import { EventManager } from '../../Libraries/Utility/EventManager';
 import { PipelineScheduleFunction } from '../../Libraries/Utility/PipelineContext';
 import { Validator } from '../../Libraries/Utility/Validator';
 import { OnSelfEnterRoomPipeline } from '../../Framework/PartyTemplate/Room/Pipelines/OnSelfEnterRoomPipeline';
+import { UpdatePlayerUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pipelines/UpdatePlayerUIPipeline';
+import { UpdateSubgameUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pipelines/UpdateSubgameUIPipeline';
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -115,6 +117,11 @@ export class Architecture extends Component
     private InitPipelines(): void
     {
         new OnSelfEnterRoomPipeline().OnEnable();
+
+        
+        new UpdatePlayerUIPipeline().OnEnable();
+
+        new UpdateSubgameUIPipeline().OnEnable();
         // new IntBilStartPipeline().OnEnable();
         // new IntBilGamingPipeline().OnEnable();
         // new IntBilEndPipeline().OnEnable();

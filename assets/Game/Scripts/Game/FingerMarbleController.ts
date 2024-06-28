@@ -16,7 +16,7 @@ import { Validator } from "../../../Libraries/Utility/Validator";
 import { NoticeType } from "../Common/Enums";
 import { TouchEventProxy } from "../Common/TouchEventProxy";
 import { FingerMarbleBall } from "./FingerMarbleBall";
-import { InterestingBilliardGame } from "./InterestingBilliardGame";
+import { FingerMarbleGame } from "./FingerMarbleGame";
 import { SettlementConfirmType, SyncSettlementData, InterestingBilliardGamingState, SyncTouchPosData, InterestingBilliardSyncEvent, BilliardAudioState, SyncSubBallFallData, SettlementType, SyncSettlementTipData, SettlementTipType, SettlementTipEnum, IntBilEvents, IntBilEndData, SyncTouchEndData, IntBilTempData } from "./InterestingBilliardTypes";
 import { Tools } from "../Common/Tools";
 import { NetAPITools } from "../Common/NetAPITools";
@@ -31,7 +31,7 @@ export class FingerMarbleController extends SubgameController
 {
     @property(FingerMarbleUIController)
     public gameUIController: FingerMarbleUIController;
-    public override subgame: InterestingBilliardGame;
+    public override subgame: FingerMarbleGame;
     private debugTag: string = "FingerMarbleController";
     private moveTimeCounter: number = 0;//触控计时器
     private moveCounter: number = 0;
@@ -505,7 +505,7 @@ export class FingerMarbleController extends SubgameController
 
     protected CreateModel(): void
     {
-        this.subgame = new InterestingBilliardGame();
+        this.subgame = new FingerMarbleGame();
     }
 
     protected update(dt: number): void
@@ -692,8 +692,6 @@ export class FingerMarbleController extends SubgameController
         if (Validator.IsObjectIllegal(context, "UpdatePlayerUIContext")) return;
         if (this.subgameId != context.gameId) return;
         this.AddPlayer(this.subgame, context);
-        if (this.subgame.state != SubgameState.Gaming)
-            this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.id == this.subgame.hostId || pp.state == PlayerState.Ready), this.subgame.hostId, true);
         if (this.subgame.state != SubgameState.Gaming)
             this.gameUIController.UpdatePlayerSeats(this.subgame.partialPlayerList.items);
         else

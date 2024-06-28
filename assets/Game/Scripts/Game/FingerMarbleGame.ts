@@ -4,11 +4,11 @@ import { Player } from "../../../Framework/PartyTemplate/Player/Player";
 import { Subgame } from "../../../Framework/PartyTemplate/Subgame/Subgame";
 import { List } from "../../../Libraries/Utility/List";
 import { IPartialPlayerList, IIsClientPlayerHost } from "../Interfaces/Interfaces";
-import { InterestingBilliardBall } from "./FingerMarbleBall";
+import { FingerMarbleBall } from "./FingerMarbleBall";
 import { InterestingBilliardGamingState, IntBilTempData } from "./InterestingBilliardTypes";
 
 
-export class InterestingBilliardGame extends Subgame implements IPartialPlayerList, IIsClientPlayerHost, IHostId
+export class FingerMarbleGame extends Subgame implements IPartialPlayerList, IIsClientPlayerHost, IHostId
 {
     public hostId: string;
     public isClientPlayerHost: boolean = false;
@@ -27,7 +27,7 @@ export class InterestingBilliardGame extends Subgame implements IPartialPlayerLi
     public maxCueSettingTime: number = 30;
     public clockTipTime: number = 10;
     public nextRoundPlayerId: string = null;
-    public curRoundFallBalls: List<InterestingBilliardBall> = new List<InterestingBilliardBall>//记录当前轮次结算记录
+    public curRoundFallBalls: List<FingerMarbleBall> = new List<FingerMarbleBall>//记录当前轮次结算记录
 
     public clientPlayerId: string = null;
     public audioCurTime: number = 0;

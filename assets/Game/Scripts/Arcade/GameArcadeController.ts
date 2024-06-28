@@ -7,6 +7,7 @@ import { Debug } from "../../../Libraries/Utility/Debug";
 import { Tools } from "../Common/Tools";
 import { TouchEventProxy } from "../Common/TouchEventProxy";
 import { LoginOpenState } from "../Login/LoginController";
+import { SubgameState } from "../../../Framework/PartyTemplate/Subgame/Subgame";
 const { ccclass, property } = _decorator;
 
 /**
@@ -65,6 +66,7 @@ export class GameArcadeController extends ArcadeController
                     hostid: "1",
                     maxpeonum: 100,
                     minpeonum: 1,
+                    gamestate:SubgameState.Idle
                     
                 }
             });

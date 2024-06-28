@@ -48,21 +48,21 @@ export class UpdatePlayerUIPipeline extends Pipeline<UpdatePlayerUIContext>
         // 显示玩家消息
         this.AddCallback(() =>
         {
-            if (!this.context.showPlayerMessage) return true;
-            var rightMsg: string;
-            switch (this.context.playerRoomState)
-            {
-                case PlayerRoomState.EnterRoom:
-                    rightMsg = "进入了房间";
-                    break;
-                case PlayerRoomState.LeaveRoom:
-                    rightMsg = "离开了房间";
-                    break
-                default:
-                    return true;
-            }
-            EventManager.Emit("ShowPlayerMessage", this.context.playerId, this.context.acountName,
-                this.context.avatarUrl, "玩家", rightMsg);
+            // if (!this.context.showPlayerMessage) return true;
+            // var rightMsg: string;
+            // switch (this.context.playerRoomState)
+            // {
+            //     case PlayerRoomState.EnterRoom:
+            //         rightMsg = "进入了房间";
+            //         break;
+            //     case PlayerRoomState.LeaveRoom:
+            //         rightMsg = "离开了房间";
+            //         break
+            //     default:
+            //         return true;
+            // }
+            // EventManager.Emit("ShowPlayerMessage", this.context.playerId, this.context.acountName,
+            //     this.context.avatarUrl, "玩家", rightMsg);
             return true;
         });
 
