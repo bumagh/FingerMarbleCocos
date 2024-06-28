@@ -48,14 +48,15 @@ export class OnSelfEnterRoomPipeline extends Pipeline<OnSelfEnterRoomContext>
     {
         // 将服务器返回的数据同步到房间、游戏、玩家列表
         this.AddStage("RoomOnSelfEnterGame");
-        this.AddCallback(() =>
-            {
-              Debug.Log("RoomOnSelfEnterGame af")
-                return true;
-            });
         this.AddStage("SubgameOnSelfEnterGame");
         this.AddStage("ArcadeOnSelfEnterRoom");
-      
+       
+        this.AddCallback(() =>
+        {
+            // ReturnButton 显示小游戏的名称
+            EventManager.Emit("ShowSubgameName", this.context.subgameNameCN);
+            return true;
+        });
         // PlayerController 检查本机玩家是否能够游玩此游戏
         this.AddStage("PlayerOnSelfEnterRoom");
 

@@ -50,7 +50,6 @@ export class PlayerController implements IEntity
         if (Validator.IsObjectIllegal(context.response, "response")) return;
         var gameRoom = context.response["gameroom"];
         if (Validator.IsObjectIllegal(gameRoom, "gameRoom")) return;
-
         if (this.player.seatIndex < 0)
             context.status = OnSelfEnterRoomStatus.HasNoSeat;
         var ischarge = sys.localStorage.getItem("IsCharge") as boolean;

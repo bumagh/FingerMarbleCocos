@@ -315,12 +315,12 @@ export class FingerMarbleController extends SubgameController
     }
     protected LoadSubgameData(): void
     {
-        if (this.debugMode)
-        {
-            this.subgameId = "1";
-            this.subgameNameCN = "来局弹珠";
-        }
-        else
+        // if (this.debugMode)
+        // {
+        //     this.subgameId = "1";
+        //     this.subgameNameCN = "来局弹珠";
+        // }
+        // else
             super.LoadSubgameData();
     }
 

@@ -52,7 +52,7 @@ export class GameArcadeController extends ArcadeController
         {
             this.OnEnterGame({
                 requestuid: "1",
-                roomuser: [{
+                gameuser: [{
                     id: "1",
                     roomid: "1",
                     gameid: "1",
