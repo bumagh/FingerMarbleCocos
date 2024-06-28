@@ -108,7 +108,7 @@ export type SyncIntBilScoreData = {
     playerId: string,
     score: number
 }
-export type IntBilEndResult = { userid: string, sort: number, sign: string, acountName: string, avatarUrl: string }
+export type IntBilEndResult = { id: string, sort: number, sign: string, acountName: string, avatarUrl: string }
 
 export type IntBilEndData =
     {

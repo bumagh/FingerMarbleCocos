@@ -43,19 +43,12 @@ export class OnSelfLeaveRoomPipeline extends Pipeline<LeaveRoomContext>
 
         this.AddCallback(() =>
         {
-            // RankListDlg 设置排行榜的gameId
-            EventManager.Emit("SetRankListDlgGameId", null);
-            return true;
-        });
-
-        this.AddCallback(() =>
-        {
-            var data = {
-                clientid: Tools.GetClientId(),
-                roomid: Tools.GetArcadeId(),
-                gameid: this.context.gameId
-            };
-            EventManager.Emit("RequestAPI", "/v1/leavegame", data);
+            // var data = {
+            //     clientid: Tools.GetClientId(),
+            //     roomid: Tools.GetArcadeId(),
+            //     gameid: this.context.gameId
+            // };
+            // EventManager.Emit("RequestAPI", "/v1/leavegame", data);
             return true;
         });
     }

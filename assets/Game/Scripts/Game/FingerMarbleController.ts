@@ -467,7 +467,7 @@ export class FingerMarbleController extends SubgameController
         {
             const player = playersClone[index];
             endData.gameresult.push({
-                userid: player.id,
+                id: player.id,
                 sort: index,
                 sign: "进球" + player.score + "个",
                 acountName: player.acountName,
@@ -718,13 +718,6 @@ export class FingerMarbleController extends SubgameController
     protected SubgameOnSelfEnterGame(context: OnSelfEnterRoomContext): void
     {
         super.SubgameOnSelfEnterGame(context);
-
-
-        EventManager.Emit(CommonEventType.SendSyncNotice, this.subgameId, "InterestingBilliardInnerAudioPlay", BilliardAudioState.BgmPrepare);
-        this.scheduleOnce(() =>
-        {
-            EventManager.Emit(CommonEventType.SendSyncNotice, this.subgameId, "InterestingBilliardInnerAudioPlay", BilliardAudioState.StartBgm);
-        }, 1);
         context.StageComplete();
     }
 

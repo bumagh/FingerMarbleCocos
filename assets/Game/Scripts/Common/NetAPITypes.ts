@@ -25,7 +25,7 @@ export type NetEndGameRespData = {
     requestuid: number,
     useridlist: number[],
     gameresult: {
-        userid: string,
+        id: string,
         sort: number,
         sign: number
     }[],
@@ -52,7 +52,7 @@ export type NetUpTeamIntegralRespData = {
         teamid: number,
         teamuser: {
             integral: number,
-            userid: number
+            id: number
         }[]
     }[],
     requestuid: number,
@@ -86,7 +86,7 @@ export type NetEnterGameGameUser = {
     sign: number,
     state: number,
     teamid: number,
-    userid: number,
+    id: number,
     xaxis: number,
     yaxis: number,
 }

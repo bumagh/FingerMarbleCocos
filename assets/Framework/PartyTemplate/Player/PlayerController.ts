@@ -44,6 +44,7 @@ export class PlayerController implements IEntity
 
     private PlayerOnSelfEnterRoom(context: OnSelfEnterRoomContext): void
     {
+        Debug.Log("PlayerOnSelfEnterRoom")
         if (this.player.id != sys.localStorage.getItem("ClientPlayerId")) return;
         if (Validator.IsObjectIllegal(context, "OnEnterRoomContext")) return;
         if (Validator.IsObjectIllegal(context.response, "response")) return;
@@ -64,7 +65,7 @@ export class PlayerController implements IEntity
         if (Validator.IsStringIllegal(context.playerId, "context.playerId")) return;
         if (this.player.id != context.playerId) return;
         const playerInfoArray = context.response["gameuser"] as Array<any>;
-        const playerInfo = playerInfoArray.find(p => p["userid"] == this.player.id);
+        const playerInfo = playerInfoArray.find(p => p["id"] == this.player.id);
         this.SetPlayerRuntimeData(playerInfo);
         context.StageComplete();
     }

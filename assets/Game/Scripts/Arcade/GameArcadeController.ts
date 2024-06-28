@@ -50,6 +50,24 @@ export class GameArcadeController extends ArcadeController
     {
         director.loadScene("Game", (err, scene) =>
         {
+            this.OnEnterGame({
+                requestuid: "1",
+                roomuser: [{
+                    id: "1",
+                    roomid: "1",
+                    gameid: "1",
+                    nickname: "1",
+                    avatarurl: "1",
+                    gender: "1",
+                }],
+                gameroom: {
+                    gameid: "1",
+                    hostid: "1",
+                    maxpeonum: 100,
+                    minpeonum: 1,
+                    
+                }
+            });
         });
     }
     protected onDestroy(): void
@@ -81,8 +99,26 @@ export class GameArcadeController extends ArcadeController
         switch (this.openState)
         {
             case ArcadeOpenState.FromLoginScene:
+                sys.localStorage.setItem("ClientPlayerId", "1")
                 // EventManager.Emit("RequestSetUserInfo");
-                
+                var dataObj = {
+                    requestuid: "1",
+                    roomuser: [{
+                        id: "1",
+                        roomid: "1",
+                        gameid: "1",
+                        nickname: "1",
+                        avatarurl: "1",
+                        gender: "1",
+                    }],
+                    gameroom: {
+                        gameid: "1",
+                        hostid: "1",
+                        maxpeonum: 100,
+                        minpeonum: 1,
+                    }
+                };
+                this.OnEnterRoom(dataObj);
                 break;
 
             case ArcadeOpenState.FromArcadeScene:
@@ -105,7 +141,29 @@ export class GameArcadeController extends ArcadeController
                 break;
         }
     }
+    private OnEnterRoom(dataObj: any): void
+    {
+        if (Validator.IsObjectIllegal(dataObj, "dataObj")) return;
+        Debug.Log(`玩家${dataObj["requestuid"]}进入了大厅`, this.selfDebugTag);
+        var playerInfoArray = dataObj["roomuser"] as Array<any>;
+        EventManager.Emit("UpdatePlayerList", playerInfoArray);
+        if (Tools.IsInArcadeScene())
+        {
+            EventManager.Emit("UpdatePlayerAvatarList", playerInfoArray);
+            // EventManager.Emit("UpdateSubgameViews");
+        }
 
+    }
+
+    private OnEnterGame(dataObj: any): void
+    {
+        if (Validator.IsObjectIllegal(dataObj, "dataObj")) return;
+        Debug.Log(`玩家${dataObj["requestuid"]}进入了游戏${dataObj["gameroom"]["gameid"]}`, this.selfDebugTag);
+        if (dataObj["requestuid"] == sys.localStorage.getItem("ClientPlayerId"))
+            EventManager.Emit("OnSelfEnterRoomPipeline", dataObj);
+        else
+            EventManager.Emit("OnOtherEnterRoomPipeline", dataObj);
+    }
     /**
      * 大厅加载游戏列表
      */
@@ -151,7 +209,7 @@ export class GameArcadeController extends ArcadeController
         return gamePlayerCount;
     }
 
-    
+
     /***
      * 打开小游戏
      */

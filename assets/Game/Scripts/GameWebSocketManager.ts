@@ -94,12 +94,12 @@ export class GameWebSocketManager extends WebSocketManager
     private OnLeavegame(dataObj: any): void
     {
         if (Validator.IsObjectIllegal(dataObj, "dataObj")) return;
-        Debug.Log(`玩家${dataObj["userid"]}离开了游戏`, this.gameDebugTag);
+        Debug.Log(`玩家${dataObj["id"]}离开了游戏`, this.gameDebugTag);
         /**
          * 本机玩家离开游戏的管线，不由WebSocket服务器的消息响应，那样太慢了
          */
-        if (this.IsClientPlayer(dataObj["userid"])) return;
-        EventManager.Emit("OnOtherLeaveRoomPipeline", dataObj["userid"]);
+        if (this.IsClientPlayer(dataObj["id"])) return;
+        EventManager.Emit("OnOtherLeaveRoomPipeline", dataObj["id"]);
     }
 
     private OnUpdateHost(dataObj: NetUpHostRespData): void
@@ -130,7 +130,7 @@ export class GameWebSocketManager extends WebSocketManager
         if (Validator.IsObjectIllegal(dataObj, "dataObj")) return;
 
         var playerState = dataObj["state"] as PlayerState;
-        var playerId = dataObj["userid"];
+        var playerId = dataObj["id"];
         var playerIdArray = dataObj["useridlist"] as number[];
 
         if (!Validator.IsObjectEmpty(playerId))
@@ -253,7 +253,7 @@ export class GameWebSocketManager extends WebSocketManager
         for (let i = 0; i < tempArray.length; i++)
         {
             const item = tempArray[i];
-            seatArray.push([item["userid"], item["index"]]);
+            seatArray.push([item["id"], item["index"]]);
         }
         EventManager.Emit("UpdateSeatIndexes", dataObj["gameid"], seatArray);
     }

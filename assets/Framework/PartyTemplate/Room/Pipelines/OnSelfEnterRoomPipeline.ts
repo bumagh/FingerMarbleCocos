@@ -48,20 +48,14 @@ export class OnSelfEnterRoomPipeline extends Pipeline<OnSelfEnterRoomContext>
     {
         // 将服务器返回的数据同步到房间、游戏、玩家列表
         this.AddStage("RoomOnSelfEnterGame");
+        this.AddCallback(() =>
+            {
+              Debug.Log("RoomOnSelfEnterGame af")
+                return true;
+            });
         this.AddStage("SubgameOnSelfEnterGame");
         this.AddStage("ArcadeOnSelfEnterRoom");
-
-        this.AddCallback(() =>
-        {
-            // ReturnButton 显示小游戏的名称
-            EventManager.Emit("ShowSubgameName", this.context.subgameNameCN);
-            // ReadyButton 设置准备按钮的gameId
-            EventManager.Emit("SetReadyButtonGameId", this.context.gameId);
-            // RankListDlg 设置排行榜的gameId
-            EventManager.Emit("SetRankListDlgGameId", this.context.gameId);
-            return true;
-        });
-
+      
         // PlayerController 检查本机玩家是否能够游玩此游戏
         this.AddStage("PlayerOnSelfEnterRoom");
 
@@ -95,7 +89,7 @@ export class OnSelfEnterRoomPipeline extends Pipeline<OnSelfEnterRoomContext>
             for (let i = 0; i < playerInfos.length; i++)
             {
                 const playerInfo = playerInfos[i];
-                EventManager.Emit("UpdatePlayerUIPipeline", playerInfo["userid"], PlayerRoomState.EnterRoom, false);
+                EventManager.Emit("UpdatePlayerUIPipeline", playerInfo["id"], PlayerRoomState.EnterRoom, false);
             }
             return true;
         });

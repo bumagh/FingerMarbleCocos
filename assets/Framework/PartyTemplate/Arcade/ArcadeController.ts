@@ -126,9 +126,9 @@ export class ArcadeController extends Component
                 var playerController = new PlayerController();
                 var player = new Player();
                 player.id = playerInfo["id"];
-                player.acountName = playerInfo["wxnickname"];
-                player.avatarUrl = playerInfo["wxavatarurl"];
-                player.gender = playerInfo["wxgender"];
+                player.acountName = playerInfo["nickname"];
+                player.avatarUrl = playerInfo["avatarurl"];
+                player.gender = playerInfo["gender"];
                 player.arcadeId = playerInfo["roomid"];
                 player.gameId = playerInfo["gameid"];
                 playerController.player = player;
@@ -136,6 +136,7 @@ export class ArcadeController extends Component
                 this.arcade.playerControllers.Add(playerController);
             }
         }
+
     }
 
     private RemoveOfflinePlayerControllers(context: PlayersOfflineContext): void
@@ -169,7 +170,7 @@ export class ArcadeController extends Component
         for (let i = 0; i < playerInfoArray.length; i++)
         {
             const playerInfo = playerInfoArray[i];
-            const controller = this.arcade.playerControllers.Find(c => c.player.id == playerInfo["userid"]);
+            const controller = this.arcade.playerControllers.Find(c => c.player.id == playerInfo["id"]);
             if (Validator.IsObjectEmpty(controller)) continue;
             controller.SetPlayerRuntimeData(playerInfo);
         }
@@ -268,6 +269,7 @@ export class ArcadeController extends Component
      */
     public LogPlayerIdList(): void
     {
+        Debug.Log("LogPlayerIdList")
         var playerIds: string;
         var length = this.arcade.playerControllers.Count;
         for (let i = 0; i < length; i++)
