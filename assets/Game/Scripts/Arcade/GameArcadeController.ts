@@ -4,10 +4,6 @@ import { EventManager } from "../../../Libraries/Utility/EventManager";
 import { Validator } from "../../../Libraries/Utility/Validator";
 import { ArcadeUIController } from "./ArcadeUIController";
 import { Debug } from "../../../Libraries/Utility/Debug";
-import { PlayersOfflineContext } from "../../../Framework/PartyTemplate/Player/Pipelines/PlayersOfflinePipeline";
-import { GameEndContext } from "../../../Framework/PartyTemplate/Subgame/Pipelines/GameEndPipeline";
-import { PipelineContext } from "../../../Libraries/Utility/PipelineContext";
-import { IRankArray } from "../../../Framework/PartyTemplate/Interfaces";
 import { Tools } from "../Common/Tools";
 import { TouchEventProxy } from "../Common/TouchEventProxy";
 import { LoginOpenState } from "../Login/LoginController";
@@ -47,7 +43,6 @@ export class GameArcadeController extends ArcadeController
         EventManager.On("OpenSubgame", this.OpenSubgame, this);
         EventManager.On("CloseSubgame", this.CloseSubgame, this);
         EventManager.On("ReloginOnArcadeScene", this.ReloginOnArcadeScene, this);
-        EventManager.On("SetRankDataOnGameEnd", this.SetRankDataOnGameEnd, this);
         EventManager.On("OnStartGameTouchEnd", this.OnStartGameTouchEnd, this);
     }
 
@@ -67,7 +62,6 @@ export class GameArcadeController extends ArcadeController
         EventManager.Off("OpenSubgame", this.OpenSubgame, this);
         EventManager.Off("CloseSubgame", this.CloseSubgame, this);
         EventManager.Off("ReloginOnArcadeScene", this.ReloginOnArcadeScene, this);
-        EventManager.Off("SetRankDataOnGameEnd", this.SetRankDataOnGameEnd, this);
         EventManager.Off("OnStartGameTouchEnd", this.OnStartGameTouchEnd, this);
 
     }
@@ -81,13 +75,14 @@ export class GameArcadeController extends ArcadeController
 
     private OnArcadeSceneStart(): void
     {
-        this.arcadeUIController = find("Canvas/UIController").getComponent(ArcadeUIController);
+        this.arcadeUIController = find("Canvas").getComponent(ArcadeUIController);
         this.arcadeUIController.openSubgame = this.OpenSubgame;
 
         switch (this.openState)
         {
             case ArcadeOpenState.FromLoginScene:
-                EventManager.Emit("RequestSetUserInfo");
+                // EventManager.Emit("RequestSetUserInfo");
+                
                 break;
 
             case ArcadeOpenState.FromArcadeScene:
@@ -156,25 +151,7 @@ export class GameArcadeController extends ArcadeController
         return gamePlayerCount;
     }
 
-
-    /**
-     * 在打开排行榜前，设置玩家的昵称和头像
-     */
-    private SetRankDataOnGameEnd(context: PipelineContext & IRankArray): void
-    {
-        if (Validator.IsObjectIllegal(context, "SetRankDataOnGameEnd context")) return;
-        if (Validator.IsObjectIllegal(context.rankArray, "context.rankArray")) return;
-        for (let i = 0; i < context.rankArray.length; i++)
-        {
-            const rank = context.rankArray[i];
-            var playerController = this.arcade.playerControllers.Find(c => c.player.id == rank.playerId);
-            if (Validator.IsObjectIllegal(playerController, "playerController")) continue;
-            rank.acountName = playerController.player.acountName;
-            rank.avatarUrl = playerController.player.avatarUrl;
-        }
-        context.StageComplete();
-    }
-
+    
     /***
      * 打开小游戏
      */
