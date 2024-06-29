@@ -1,4 +1,4 @@
-import { _decorator, Component, SpriteFrame, Graphics, Label, Sprite, Vec3, Camera, EventTouch, game, Color, misc, Vec2, PhysicsSystem2D, ERaycast2DType, Node } from "cc";
+import { _decorator, Component, SpriteFrame, Graphics, Label, Sprite, Vec3, Camera, EventTouch, game, Color, misc, Vec2, PhysicsSystem2D, ERaycast2DType, Node, Prefab, instantiate } from "cc";
 import { PlayerState, Player } from "../../../Framework/PartyTemplate/Player/Player";
 import { Algorithm } from "../../../Libraries/Utility/Algorithm";
 import { EventManager } from "../../../Libraries/Utility/EventManager";
@@ -27,33 +27,26 @@ export class FingerMarbleUIController extends Component
     @property(NodeReferences)
     public canvasReferences: NodeReferences;
     public readyButton: ReadyButton;
-
     @property(BoardClock)
     public boardClock: BoardClock;
-
-    @property(Node)
-    public gamingPlayerTip: Node;
     @property(SpriteFrame)
     public emptyHeadIcon: SpriteFrame;
-
-    @property(Node)
-    public playerAvatarGridNode: Node;
     @property(FingerMarbleCue)
     public cueNode: FingerMarbleCue;//球杆
     public teamBoard: FingerMarbleTeamBoard;
     public mainBall: FingerMarbleBall;//主球
     public subBalls: List<FingerMarbleBall> = new List<FingerMarbleBall>;//子球
-
+    public ballsParent: Node;
     @property(Graphics)
     public graphicsPanel: Graphics;
     @property([Node])
     public walls: Node[] = [];
+    @property(Prefab)
+    public marbleBall: Prefab;
     private descriptionDlg: Node; //游戏说明
     public settingDlg: Node; //游戏设定
-    private gameNameLabel: Label; //游戏名称
     public mainBallWorldSpacePos = new Vec3(0, 0, 0);//主球世界坐标
     public touchWorldSpacePos = new Vec3(0, 0, 0);//触点世界坐标
-    public resetMainBallWorldSpacePos = new Vec3(0, -450, 0);//主球重置世界坐标
 
     public camera: Camera;
     protected onLoad(): void
@@ -62,97 +55,21 @@ export class FingerMarbleUIController extends Component
         //界面ui
         EventManager.On("onCloseDescriptionDlg", this.onCloseDescriptionDlg, this);
         EventManager.On("onOpenDescriptionDlg", this.onOpenDescriptionDlg, this);
-
         EventManager.On("onCloseSettingDlg", this.onCloseSettingDlg, this);
         EventManager.On("onOpenSettingDlg", this.onOpenSettingDlg, this);
-        this.teamBoard = this.canvasReferences.GetVisual("GameUI/PlayerBoard",FingerMarbleTeamBoard);
-        this.readyButton = this.canvasReferences.GetVisual("ReadyButton",ReadyButton);
+        this.teamBoard = this.canvasReferences.GetVisual("GameUI/PlayerBoard", FingerMarbleTeamBoard);
+        this.readyButton = this.canvasReferences.GetVisual("ReadyButton", ReadyButton);
+        this.ballsParent = this.canvasReferences.GetNode("ScreenTable/Balls");
     }
 
     protected onDestroy(): void
     {
-        //界面ui
         EventManager.Off("onCloseDescriptionDlg", this.onCloseDescriptionDlg, this);
         EventManager.Off("onOpenDescriptionDlg", this.onOpenDescriptionDlg, this);
-
         EventManager.Off("onCloseSettingDlg", this.onCloseSettingDlg, this);
         EventManager.Off("onOpenSettingDlg", this.onOpenSettingDlg, this);
-        //轮次逻辑
-
-    }
-    /**
-    * 设置桌球的头像和账号
-    */
-    public SetClientPlayerUI(playerOrder: number, gender: Gender, playerId: string, avatarUrl: string, playerState: PlayerState, isHost: boolean, isClientIdle: boolean = false)
-    {
-        if (playerOrder < 0 || playerOrder > 9) return;
-        const ballNo = playerOrder + 1;
-        if (!Validator.IsStringEmpty(playerId))
-        {
-            this.subBalls.items[ballNo - 1].playerId = playerId;
-            this.subBalls.items[ballNo - 1].isMainBall = false;
-            // 设置图标
-            EventManager.Emit("SetRemoteSpriteFrame", "PlayerAvatar", playerId, this.subBalls.items[ballNo - 1].avatarSprite, avatarUrl);
-            this.subBalls.items[ballNo - 1].SetOutLineColorByGender(gender);
-            isClientIdle && this.subBalls.items[ballNo - 1].ChangePlayerState(playerState, isHost);
-        }
     }
 
-    /**
-    * 重置桌球的头像和账号
-    */
-    public ResetClientPlayerUI(playerId: string, isGaming: boolean)
-    {
-        if (!Validator.IsStringEmpty(playerId))
-        {
-            var subBall = this.subBalls.Find(ball => ball.playerId == playerId);
-            if (subBall == undefined) return;
-            subBall.playerId = null;
-            subBall.isMainBall = false;
-            subBall.avatarSprite.spriteFrame = this.emptyHeadIcon;
-            subBall.SetOutLineColorByGender(Gender.UnKnown);
-            subBall.ChangePlayerState(0 as PlayerState, false);
-        }
-        //让玩家数据往前移
-        for (let index = 0; index < this.subBalls.Count - 1; index++)
-        {
-            const subBallAfter = this.subBalls.items[index + 1];
-            const subBallThis = this.subBalls.items[index]
-            if (subBallThis.playerId == null && subBallAfter.playerId != null)
-            {
-                subBallThis.playerId = subBallAfter.playerId;
-                subBallThis.isMainBall = false;
-                subBallThis.avatarSprite.spriteFrame = subBallAfter.avatarSprite.spriteFrame;
-                subBallThis.avatarSprite.color = subBallAfter.avatarSprite.color;
-                subBallThis.stateLabel.string = index == 0 ? "未开始" : subBallAfter.stateLabel.string;
-                if (isGaming) subBallThis.stateLabel.string = "";
-
-                subBallThis.outLineMaskNode.active = true;
-                subBallThis.SetOutLineColorByGender(subBallAfter.gender);
-
-                subBallAfter.playerId = null;
-                subBallAfter.isMainBall = false;
-                subBallAfter.avatarSprite.spriteFrame = this.emptyHeadIcon;
-                subBallAfter.SetOutLineColorByGender(Gender.UnKnown);
-                subBallAfter.ChangePlayerState(0 as PlayerState, false);
-
-            }
-        }
-    }
-
-    public ResetAllBalls()
-    {
-        this.subBalls.items.forEach(subBall =>
-        {
-            subBall.ResetPosition();
-            subBall.ResetRotation();
-            subBall.ResetEnergy();
-            subBall.isFall = false;
-        })
-        this.mainBall.ResetPosition();
-        this.mainBall.ResetRotation();
-        this.mainBall.ResetEnergy();
-    }
 
     /**
     * 设置击球玩家的头像和账号
@@ -583,55 +500,21 @@ export class FingerMarbleUIController extends Component
         lineActive && this.DrawCueLine(touchPos);
     }
 
-    public UpdatePlayerGamingBalls(players: Player[], hostId: string, isClientIdle: boolean = false): void
-    {
-        if (Validator.IsObjectIllegal(players, "players")) return;
-        players.sort((a, b) => a.seatIndex - b.seatIndex);
-        // 重置所有单元格
-        for (let i = 0; i < this.subBalls.items.length; i++)
-        {
-            const playerUI = this.subBalls.items[i];
-            if (Validator.IsStringEmpty(playerUI.playerId)) continue;
-            this.ResetPlayerSeat(playerUI);
-        }
-        // 重新设置所有单元格
-        if (players.length == 1)
-        {
-            for (let index = 0; index < 5; index++)
-            {
-                const player = players[0];
-                this.SetClientPlayerUI(index, player.gender as Gender, player.id, player.avatarUrl, player.state, player.id == hostId, isClientIdle);
-            }
-        } else if (players.length == 2)
-        {
-            for (let index = 0; index < 10; index++)
-            {
-                if (players.length != 2) return;
-                const player = players[index % players.length];
-                this.SetClientPlayerUI(index, player.gender as Gender, player.id, player.avatarUrl, player.state, player.id == hostId, isClientIdle);
-            }
-        }
-
-
-    }
-
+    
     public UpdatePlayerBalls(players: Player[], hostId: string, isClientIdle: boolean = false): void
     {
         if (Validator.IsObjectIllegal(players, "players")) return;
-        players.sort((a, b) => a.seatIndex - b.seatIndex);
-        // 重置所有单元格
-        for (let i = 0; i < this.subBalls.items.length; i++)
-        {
-            const playerUI = this.subBalls.items[i];
-            if (Validator.IsStringEmpty(playerUI.playerId)) continue;
-            this.ResetPlayerSeat(playerUI);
-        }
-        // 重新设置所有单元格
+        this.UpdateSubBalls();
+
         for (let i = 0; i < players.length; i++)
         {
-            if (Validator.IsArrayOutOfIndex(this.subBalls.items, i)) break;
-            const player = players[i];
-            this.SetClientPlayerUI(i, player.gender as Gender, player.id, player.avatarUrl, player.state, player.id == hostId, isClientIdle);
+            if (this.subBalls.items[i].playerId == players[i].id) continue;
+            var newBall: Node = instantiate(this.marbleBall);
+            this.ballsParent.addChild(newBall);
+            var fingerMarbleBall = newBall.getComponent<FingerMarbleBall>(FingerMarbleBall);
+            fingerMarbleBall.name = players[i].acountName;
+            fingerMarbleBall.playerId = players[i].id;
+            fingerMarbleBall.SetRandPos();
         }
     }
 
@@ -724,10 +607,6 @@ export class FingerMarbleUIController extends Component
         playerUI.state = PlayerState.Idle;
         playerUI.node.active = false;
     }
-    public ShowPlayerSeat(show: boolean)
-    {
-        this.playerAvatarGridNode.active = show;
-    }
     public SetTeamBoardPlayer(player: Player, seatIndex: number, isHost: boolean)
     {
         if (Validator.IsObjectEmpty(player)) return;
@@ -763,7 +642,6 @@ export class FingerMarbleUIController extends Component
      */
     public UpdateHorizPlayers(players: Player[], hostId: string)
     {
-        Debug.Log(players)
         if (Validator.IsObjectIllegal(players, "players")) return;
         // players.sort((a, b) => a.seatIndex - b.seatIndex);
         this.ResetAllHorizPlayers();
@@ -773,20 +651,30 @@ export class FingerMarbleUIController extends Component
             if (Validator.IsStringEmpty(player.id)) continue;
             this.SetTeamBoardPlayer(player, index, player.id == hostId);
         }
+        this.UpdatePlayerBalls(players, hostId);
     }
     public SetHorizPlayerScore(playerId: string, team: Team, score: number)
     {
-     
-            var horizPlayer = this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId);
-            if (horizPlayer != undefined)
-            {
-                horizPlayer?.score.AddScore(score);
-            }
+        var horizPlayer = this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId);
+        if (horizPlayer != undefined)
+        {
+            horizPlayer?.score.AddScore(score);
+        }
     }
 
     public SetHorizPlayerStateLabel(playerId: string, playerState: PlayerState, isHost: boolean)
     {
-            this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId) != undefined && this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId).ChangePlayerState(playerState, isHost);
+        this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId) != undefined && this.teamBoard.horizPlayers.find(hp => hp.playerId == playerId).ChangePlayerState(playerState, isHost);
     }
 
+    public UpdateSubBalls()
+    {
+        var ballNodes: Node[] = this.canvasReferences.GetNode("ScreenTable/Balls").children;
+        this.subBalls.Clear();
+        for (let index = 0; index < ballNodes.length; index++)
+        {
+            this.subBalls.Add(ballNodes[index].getComponent<FingerMarbleBall>(FingerMarbleBall));
+        }
+        this.mainBall = this.subBalls.items[0];
+    }
 }

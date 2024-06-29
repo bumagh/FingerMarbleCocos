@@ -1,6 +1,7 @@
 import { CCBoolean, CircleCollider2D, Collider2D, Color, Component, Label, Node, Quat, RigidBody2D, Sprite, UITransform, Vec2, Vec3, _decorator } from 'cc';
 import { Gender } from '../Common/Enums';
 import { PlayerState } from '../../../Framework/PartyTemplate/Player/Player';
+import { Algorithm } from '../../../Libraries/Utility/Algorithm';
 const { ccclass, property } = _decorator;
 
 @ccclass("FingerMarbleBall")
@@ -156,5 +157,9 @@ export class FingerMarbleBall extends Component
     public GetBallRadius()
     {
         return this.getComponent<CircleCollider2D>(CircleCollider2D).radius;
+    }
+    public SetRandPos()
+    {
+        this.node.setPosition(new Vec3(-536+ Algorithm.GetRandomNumber(1000,0),1200-Algorithm.GetRandomNumber(2400,0),0))       
     }
 }

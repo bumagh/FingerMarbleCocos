@@ -45,8 +45,24 @@ export class GameArcadeController extends ArcadeController
         EventManager.On("CloseSubgame", this.CloseSubgame, this);
         EventManager.On("ReloginOnArcadeScene", this.ReloginOnArcadeScene, this);
         EventManager.On("OnStartGameTouchEnd", this.OnStartGameTouchEnd, this);
+        EventManager.On("OnEnterRoom",this.OnEnterRoom, this);
+        EventManager.On("OnEnterGame",this.OnEnterGame, this);
     }
+    protected onDestroy(): void
+    {
+        super.onDestroy();
 
+        EventManager.Off("OnArcadeSceneStart", this.OnArcadeSceneStart, this);
+        EventManager.Off("ArcadeLoadGameList", this.ArcadeLoadGameList, this);
+        EventManager.Off("UpdatePlayerAvatarList", this.UpdatePlayerAvatarList, this);
+        EventManager.Off("OpenSubgame", this.OpenSubgame, this);
+        EventManager.Off("CloseSubgame", this.CloseSubgame, this);
+        EventManager.Off("ReloginOnArcadeScene", this.ReloginOnArcadeScene, this);
+        EventManager.Off("OnStartGameTouchEnd", this.OnStartGameTouchEnd, this);
+        EventManager.Off("OnEnterRoom", this.OnEnterRoom, this);
+        EventManager.Off("OnEnterGame", this.OnEnterGame, this);
+
+    }
     private OnStartGameTouchEnd(touch: TouchEventProxy, event: EventTouch)
     {
         director.loadScene("Game", (err, scene) =>
@@ -72,19 +88,7 @@ export class GameArcadeController extends ArcadeController
             });
         });
     }
-    protected onDestroy(): void
-    {
-        super.onDestroy();
-
-        EventManager.Off("OnArcadeSceneStart", this.OnArcadeSceneStart, this);
-        EventManager.Off("ArcadeLoadGameList", this.ArcadeLoadGameList, this);
-        EventManager.Off("UpdatePlayerAvatarList", this.UpdatePlayerAvatarList, this);
-        EventManager.Off("OpenSubgame", this.OpenSubgame, this);
-        EventManager.Off("CloseSubgame", this.CloseSubgame, this);
-        EventManager.Off("ReloginOnArcadeScene", this.ReloginOnArcadeScene, this);
-        EventManager.Off("OnStartGameTouchEnd", this.OnStartGameTouchEnd, this);
-
-    }
+ 
 
     protected ReturnToLoginScene(state: LoginOpenState): void
     {
@@ -145,6 +149,7 @@ export class GameArcadeController extends ArcadeController
     }
     private OnEnterRoom(dataObj: any): void
     {
+        Debug.Log(dataObj)
         if (Validator.IsObjectIllegal(dataObj, "dataObj")) return;
         Debug.Log(`玩家${dataObj["requestuid"]}进入了大厅`, this.selfDebugTag);
         var playerInfoArray = dataObj["roomuser"] as Array<any>;

@@ -24,6 +24,7 @@ import { NetCountDownRespData } from "../Common/NetAPITypes";
 import { CommonEventType } from "../Common/CommonEventType";
 import { ReadyButton } from "../Common/ReadyButton";
 import { FingerMarbleUIController } from "./FingerMarbleUIController";
+import { OnOtherEnterRoomContext } from "../../../Framework/PartyTemplate/Room/Pipelines/OnOtherEnterRoomPipeline";
 const { ccclass, property } = _decorator;
 
 @ccclass('FingerMarbleController')
@@ -71,6 +72,7 @@ export class FingerMarbleController extends SubgameController
 
         EventManager.On("OnSettingBtnTouchEnd", this.OnSettingBtnTouchEnd, this);
         EventManager.On("OnSettingCloseTouchEnd", this.OnSettingCloseTouchEnd, this);
+        EventManager.On("OnEnterRoomTouchEnd", this.OnEnterRoomTouchEnd, this);
         //固定低帧率，为了适配低配机型
         game.frameRate = 30;
     }
@@ -108,6 +110,7 @@ export class FingerMarbleController extends SubgameController
         EventManager.Off("SyncSettlement", this.OnSyncSettlement, this);
         EventManager.Off("OnSettingBtnTouchEnd", this.OnSettingBtnTouchEnd, this);
         EventManager.Off("OnSettingCloseTouchEnd", this.OnSettingCloseTouchEnd, this);
+        EventManager.Off("OnEnterRoomTouchEnd", this.OnEnterRoomTouchEnd, this);
 
     }
 
@@ -124,7 +127,6 @@ export class FingerMarbleController extends SubgameController
     {
         if (this.ShouldGameEnd())
         {
-            this.gameUIController.ResetAllBalls();
             var syncSettlementData: SyncSettlementData = {
                 gamingPlayerId: data.nextPlayerId,
                 mainBallPos: new Vec3(),
@@ -254,7 +256,7 @@ export class FingerMarbleController extends SubgameController
                 this.subgame.curRoundFallBalls.Add(otherCollider.node.getComponent<FingerMarbleBall>(FingerMarbleBall));
             otherCollider.node.getComponent<RigidBody2D>(RigidBody2D).linearVelocity = new Vec2(0, 0);
 
-            this.scheduleOnce(() => otherCollider.node.setPosition(this.gameUIController.resetMainBallWorldSpacePos), 0.4);
+            // this.scheduleOnce(() => otherCollider.node.setPosition(this.gameUIController.resetMainBallWorldSpacePos), 0.4);
             // this.scheduleOnce(() => otherCollider.node.active=false, 0.4);
         }
         //其他球随机位置
@@ -434,7 +436,6 @@ export class FingerMarbleController extends SubgameController
         //给球设置头像和UI
         this.gameUIController.boardClock.SetClockState(true, this.subgame.maxCueSettingTime);
         this.gameUIController.SetGamingPlayerInfo(this.subgame.partialPlayerList.FindAll(pp => (this.subgame.tempData.gamingPlayerIds.find(id => id == pp.id) != undefined)), this.subgame.tempData.gamingPlayerId);
-        this.gameUIController.gamingPlayerTip.active = true;
     }
 
     protected SubgameOnGameEnd(context: GameEndContext): void
@@ -648,19 +649,16 @@ export class FingerMarbleController extends SubgameController
         if (this.IsAlreadyGaming()) return;
         this.subgame.state = SubgameState.Gaming;
         //默认房主是第一回合玩家
-        this.gameUIController.gamingPlayerTip.active = true;
         this.subgame.tempData.gamingPlayerId = this.roomController.room.hostId;
         this.subgame.tempData.gaming = true;
         EventManager.Emit("IntBilGamingPipeline", this.subgameId);
         if (context.isClientPlayerGaming)
             this.ClientOnGaming();
         this.gameUIController.SetGamingPlayerInfo(this.subgame.partialPlayerList.FindAll(pp => pp.state == PlayerState.Gaming), this.subgame.tempData.gamingPlayerId);
-        this.gameUIController.gamingPlayerTip.active = true;
         context.StageComplete();
     }
     protected ClientOnGaming(): void
     {
-        this.gameUIController.ShowPlayerSeat(false);
         this.UpdateRoundData(Tools.IsClientPlayer(this.subgame.tempData.gamingPlayerId));
         //不显示所有玩家状态了
         this.gameUIController.subBalls.items.forEach(subBall =>
@@ -685,11 +683,8 @@ export class FingerMarbleController extends SubgameController
     {
         //游戏回合结束
         this.ClearGameData();
-        this.gameUIController.ResetAllBalls();
         this.gameUIController.ShowSelfRoundTip(false);
-        this.gameUIController.gamingPlayerTip.active = false;
         this.gameUIController.boardClock.SetClockState(false);
-        this.gameUIController.ShowPlayerSeat(true);
         this.gameUIController.cueNode.RoundStart();
         this.gameUIController.cueNode.SetActive(false);
         //设置所有玩家状态
@@ -718,8 +713,8 @@ export class FingerMarbleController extends SubgameController
         var player = this.subgame.partialPlayerList.Find(p => p.id == context.playerId);
         if (!Validator.IsObjectEmpty(player))
             player.state = context.playerState;
-        if (this.subgame.state != SubgameState.Gaming)
-            this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.id == this.subgame.hostId || pp.state == PlayerState.Ready), this.subgame.hostId, true);
+        // if (this.subgame.state != SubgameState.Gaming)
+        //     this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.id == this.subgame.hostId || pp.state == PlayerState.Ready), this.subgame.hostId, true);
 
         if (this.subgame.state != SubgameState.Gaming)
             this.gameUIController.UpdatePlayerSeats(this.subgame.partialPlayerList.items);
@@ -775,7 +770,7 @@ export class FingerMarbleController extends SubgameController
         if (this.subgame.state != SubgameState.Gaming)
         {
             this.RemovePlayer(this.subgame, context);
-            this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.id == this.subgame.hostId || pp.state == PlayerState.Ready), this.subgame.hostId, true);
+            // this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.id == this.subgame.hostId || pp.state == PlayerState.Ready), this.subgame.hostId, true);
         }
         if (this.subgame.state != SubgameState.Gaming)
             this.gameUIController.UpdatePlayerSeats(this.subgame.partialPlayerList.items);
@@ -819,8 +814,8 @@ export class FingerMarbleController extends SubgameController
         var isClientPlayerHost = context.clientPlayerId == context.hostId;
         this.subgame.isClientPlayerHost = isClientPlayerHost;
         this.subgame.hostId = context.hostId;
-        if (this.subgame.state != SubgameState.Gaming)
-            this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.id == this.subgame.hostId || pp.state == PlayerState.Ready), this.subgame.hostId, true);
+        // if (this.subgame.state != SubgameState.Gaming)
+        //     this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.id == this.subgame.hostId || pp.state == PlayerState.Ready), this.subgame.hostId, true);
         context.StageComplete();
     }
 
@@ -843,7 +838,6 @@ export class FingerMarbleController extends SubgameController
                 EventManager.Emit("ShowReadyButton", this.subgameId, false);
                 EventManager.Emit("SetPlayerState", Tools.GetClientPlayerId(), PlayerState.Gaming);
                 this.subgame.state = SubgameState.Gaming;
-                this.gameUIController.ShowPlayerSeat(false);
                 //重连成功
                 NetAPITools.SendNotice(this.subgameId, "IntBilPlayerReconnected", context.playerId, NoticeType.Others);
                 if (this.subgame.tempData.gamingPlayerId == context.playerId)
@@ -852,7 +846,7 @@ export class FingerMarbleController extends SubgameController
                     var player = this.subgame.partialPlayerList.Find(pp => pp.id == context.playerId);
                     if (!Validator.IsObjectEmpty(player))
                         player.state = PlayerState.Gaming;
-                    this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(p => p.state == PlayerState.Gaming), this.subgame.hostId, false);
+                    // this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(p => p.state == PlayerState.Gaming), this.subgame.hostId, false);
                     //等待一秒
                     this.scheduleOnce(() =>
                     {
@@ -866,7 +860,7 @@ export class FingerMarbleController extends SubgameController
         }
         if (this.subgame.state == SubgameState.Gaming)
         {
-            this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => (this.subgame.tempData.gamingPlayerIds.find(id => id == pp.id) != undefined)), this.subgame.hostId, false);
+            // this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => (this.subgame.tempData.gamingPlayerIds.find(id => id == pp.id) != undefined)), this.subgame.hostId, false);
         }
         context.StageComplete();
     }
@@ -902,7 +896,7 @@ export class FingerMarbleController extends SubgameController
         if (context.gameId != this.subgameId) return;
         if (context.subgameState == SubgameState.Gaming)
         {
-            this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.state == PlayerState.Gaming), this.subgame.hostId, false);
+            // this.gameUIController.UpdatePlayerGamingBalls(this.subgame.partialPlayerList.FindAll(pp => pp.state == PlayerState.Gaming), this.subgame.hostId, false);
         }
         context.StageComplete();
     }
@@ -1006,6 +1000,65 @@ export class FingerMarbleController extends SubgameController
     }
     private OnSettingCloseTouchEnd(proxy: TouchEventProxy, event: EventTouch)
     {
-        this.gameUIController.settingDlg.active = false;  
+        this.gameUIController.settingDlg.active = false;
+    }
+    private OnEnterRoomTouchEnd(proxy: TouchEventProxy, event: EventTouch)
+    {
+        EventManager.Emit("OnEnterRoom",{
+            requestuid: "2",
+            roomuser: [{
+                id: "1",
+                roomid: "1",
+                gameid: "1",
+                nickname: "1",
+                avatarurl: "1",
+                gender: "1",
+            },{
+                id: "2",
+                roomid: "1",
+                gameid: "1",
+                nickname: "2",
+                avatarurl: "2",
+                gender: "2",
+            }],
+            gameroom: {
+                gameid: "1",
+                hostid: "1",
+                maxpeonum: 100,
+                minpeonum: 1,
+                gamestate:SubgameState.Idle
+                
+            }
+        });
+        EventManager.Emit("OnEnterGame",{
+            requestuid: "2",
+            gameuser: [{
+                id: "1",
+                roomid: "1",
+                gameid: "1",
+                nickname: "1",
+                avatarurl: "1",
+                gender: "1",
+            },{
+                id: "2",
+                roomid: "1",
+                gameid: "1",
+                nickname: "2",
+                avatarurl: "2",
+                gender: "2",
+            }],
+            gameroom: {
+                gameid: "1",
+                hostid: "1",
+                maxpeonum: 100,
+                minpeonum: 1,
+                gamestate:SubgameState.Idle
+                
+            }
+        });
+    }
+    protected SubgameOnOtherEnterRoom(context: OnOtherEnterRoomContext): void
+    {
+        context.StageComplete();
     }
 }

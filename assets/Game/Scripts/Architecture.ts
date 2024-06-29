@@ -7,6 +7,7 @@ import { OnSelfEnterRoomPipeline } from '../../Framework/PartyTemplate/Room/Pipe
 import { UpdatePlayerUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pipelines/UpdatePlayerUIPipeline';
 import { UpdateSubgameUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pipelines/UpdateSubgameUIPipeline';
 import { IntBilStartPipeline } from './Game/Pipelines/IntBilStartPipeline';
+import { OnOtherEnterRoomPipeline } from '../../Framework/PartyTemplate/Room/Pipelines/OnOtherEnterRoomPipeline';
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -118,7 +119,7 @@ export class Architecture extends Component
     private InitPipelines(): void
     {
         new OnSelfEnterRoomPipeline().OnEnable();
-
+        new OnOtherEnterRoomPipeline().OnEnable();
         
         new UpdatePlayerUIPipeline().OnEnable();
 

@@ -4,6 +4,7 @@ import { Validator } from "../../../../Libraries/Utility/Validator";
 import { EventManager } from "../../../../Libraries/Utility/EventManager";
 import { PlayerRoomState } from "../../Player/Player";
 import { IPlayerId } from "../../Interfaces";
+import { Debug } from "../../../../Libraries/Utility/Debug";
 
 export class OnOtherEnterRoomContext extends PipelineContext implements IPlayerId
 {
@@ -46,25 +47,6 @@ export class OnOtherEnterRoomPipeline extends Pipeline<OnOtherEnterRoomContext>
         // SubgameController
         this.AddStage("SubgameOnOtherEnterRoom");
 
-        this.AddCallback(() =>
-        {
-            this.context.stayInArcade = director.getScene().name == "Arcade";
-            return true;
-        });
-
-        // 如果本机玩家在大厅
-        this.AddCallback(() =>
-        {
-            if (this.context.stayInArcade)
-            {
-                // 刷新玩家列表中玩家的绿点
-                EventManager.Emit("ShowArcadePlayerReadyIcon", this.context.playerId, true);
-                // 刷新所有小游戏的的人数和外发光
-                EventManager.Emit("UpdateSubgameViews");
-            }
-            return true;
-        });
-
         // SubgameController 如果本机玩家在游戏内,在子类中对进入游戏的玩家的UI进行处理
         this.AddCallback(() =>
         {
@@ -75,7 +57,7 @@ export class OnOtherEnterRoomPipeline extends Pipeline<OnOtherEnterRoomContext>
 
         this.AddCallback(() =>
         {
-            EventManager.Emit("OnFinishEnterRoomPipeline", this.context.roomId, this.context.playerId);
+            // EventManager.Emit("OnFinishEnterRoomPipeline", this.context.roomId, this.context.playerId);
             return true;
         });
     }
