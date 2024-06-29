@@ -43,7 +43,7 @@ export class FingerMarbleController extends SubgameController
     protected onLoad(): void
     {
         super.onLoad();
-        // this.gameUIController.readyButton.customOnTouchEvent = "OnIntBilReadyButtonTouch";
+        this.gameUIController.readyButton.customOnTouchEvent = "OnIntBilReadyButtonTouch";
         EventManager.On("OnIntBilReadyButtonTouch", this.OnIntBilReadyButtonTouch, this);
         EventManager.On("OnTouchAreaTouched", this.OnTouchAreaTouched, this);
         EventManager.On("OnTouchAreaTouchEnd", this.OnTouchAreaTouchEnd, this);
@@ -68,6 +68,9 @@ export class FingerMarbleController extends SubgameController
         // EventManager.On("IntBilGamingSetCurRoundPlayerIds", this.IntBilGamingSetCurRoundPlayerIds, this);
         EventManager.On("IntBilEndGameConfirm", this.IntBilEndGameConfirm, this);
         EventManager.On("IntBilPlayerReconnected", this.IntBilPlayerReconnected, this);
+
+        EventManager.On("OnSettingBtnTouchEnd", this.OnSettingBtnTouchEnd, this);
+        EventManager.On("OnSettingCloseTouchEnd", this.OnSettingCloseTouchEnd, this);
         //固定低帧率，为了适配低配机型
         game.frameRate = 30;
     }
@@ -103,6 +106,8 @@ export class FingerMarbleController extends SubgameController
         EventManager.Off("IntBilEndGameConfirm", this.IntBilEndGameConfirm, this);
         EventManager.Off("IntBilPlayerReconnected", this.IntBilPlayerReconnected, this);
         EventManager.Off("SyncSettlement", this.OnSyncSettlement, this);
+        EventManager.Off("OnSettingBtnTouchEnd", this.OnSettingBtnTouchEnd, this);
+        EventManager.Off("OnSettingCloseTouchEnd", this.OnSettingCloseTouchEnd, this);
 
     }
 
@@ -164,11 +169,11 @@ export class FingerMarbleController extends SubgameController
         */
     private OnTouchAreaTouched(proxy: TouchEventProxy, event: EventTouch): void
     {
-        if(Tools.IsLocalMode()){
-            // this.gameUIController.ShowCueSetting(event.getLocation());
-            // this.subgame.touchTimer = 0;
-            // this.subgame.touchStarted = true;
-            Debug.Log("test");
+        if (Tools.IsLocalMode())
+        {
+            this.gameUIController.ShowCueSetting(event.getLocation());
+            this.subgame.touchTimer = 0;
+            this.subgame.touchStarted = true;
             return;
         }
         if (this.subgame.state != SubgameState.Gaming) return;
@@ -191,7 +196,8 @@ export class FingerMarbleController extends SubgameController
     */
     private OnTouchAreaTouchMove(proxy: TouchEventProxy, event: EventTouch): void
     {
-        if(Tools.IsLocalMode()){
+        if (Tools.IsLocalMode())
+        {
             this.gameUIController.ShowCueSetting(event.getLocation());
             return;
         }
@@ -215,7 +221,8 @@ export class FingerMarbleController extends SubgameController
 
     private OnTouchAreaTouchEnd(proxy: TouchEventProxy, event: EventTouch): void
     {
-        if(Tools.IsLocalMode()){
+        if (Tools.IsLocalMode())
+        {
             this.subgame.touchStarted = false;
             //同步本地到其他玩家
             this.gameUIController.StartPushCue(this.subgameId, true);
@@ -321,7 +328,7 @@ export class FingerMarbleController extends SubgameController
         //     this.subgameNameCN = "来局弹珠";
         // }
         // else
-            super.LoadSubgameData();
+        super.LoadSubgameData();
     }
 
     //从服务器处理游戏结算提示
@@ -577,6 +584,11 @@ export class FingerMarbleController extends SubgameController
         }
     }
 
+    private OnSettingBtnTouchEnd(proxy: TouchEventProxy, event: EventTouch)
+    {
+        Debug.Log("setting");
+        this.gameUIController.settingDlg.active = true;
+    }
     //从不同的结算类型完成结算
     private SettlementByState(state: SettlementType)
     {
@@ -991,5 +1003,9 @@ export class FingerMarbleController extends SubgameController
             EventManager.Emit(CommonEventType.ShowMessage, "玩家" + playerId + "重连成功", false);
             EventManager.Emit("CloseTip");
         }
+    }
+    private OnSettingCloseTouchEnd(proxy: TouchEventProxy, event: EventTouch)
+    {
+        this.gameUIController.settingDlg.active = false;  
     }
 }

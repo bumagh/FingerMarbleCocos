@@ -5,7 +5,6 @@ import { EventManager } from "../../../Libraries/Utility/EventManager";
 import { List } from "../../../Libraries/Utility/List";
 import { Validator } from "../../../Libraries/Utility/Validator";
 import { Gender, Team } from "../Common/Enums";
-import { NetAPITools } from "../Common/NetAPITools";
 import { NodeReferences } from "../Common/NodeReferences";
 import { ReadyButton } from "../Common/ReadyButton";
 import { TouchEventProxy } from "../Common/TouchEventProxy";
@@ -27,7 +26,6 @@ export class FingerMarbleUIController extends Component
     private debugTag: string = "FingerMarbleUIController";
     @property(NodeReferences)
     public canvasReferences: NodeReferences;
-    @property(ReadyButton)
     public readyButton: ReadyButton;
 
     @property(BoardClock)
@@ -51,14 +49,8 @@ export class FingerMarbleUIController extends Component
     @property([Node])
     public walls: Node[] = [];
     private descriptionDlg: Node; //游戏说明
-    private settingDlg: Node; //游戏设定
+    public settingDlg: Node; //游戏设定
     private gameNameLabel: Label; //游戏名称
-    private gamingPlayerNameLabel: Label;  //左上方当前回合玩家击球提示
-    private gamingPlayerHeadIcon: Sprite;  //左上方当前回合玩家击球头像
-    private gamingPlayerNameLabel2: Label;  //左上方当前回合玩家击球提示
-    private gamingPlayerHeadIcon2: Sprite;  //左上方当前回合玩家击球头像
-    private gamingIconGlow1: Sprite;  //左上方当前回合玩家击球头像
-    private gamingIconGlow2: Sprite;  //左上方当前回合玩家击球头像
     public mainBallWorldSpacePos = new Vec3(0, 0, 0);//主球世界坐标
     public touchWorldSpacePos = new Vec3(0, 0, 0);//触点世界坐标
     public resetMainBallWorldSpacePos = new Vec3(0, -450, 0);//主球重置世界坐标
@@ -74,6 +66,7 @@ export class FingerMarbleUIController extends Component
         EventManager.On("onCloseSettingDlg", this.onCloseSettingDlg, this);
         EventManager.On("onOpenSettingDlg", this.onOpenSettingDlg, this);
         this.teamBoard = this.canvasReferences.GetVisual("GameUI/PlayerBoard",FingerMarbleTeamBoard);
+        this.readyButton = this.canvasReferences.GetVisual("ReadyButton",ReadyButton);
     }
 
     protected onDestroy(): void
@@ -167,23 +160,21 @@ export class FingerMarbleUIController extends Component
     public SetGamingPlayerInfo(players: Player[], gamingPlayerId: string)
     {
         players.sort((a, b) => a.seatIndex - b.seatIndex);
-        for (let index = 0; index < players.length; index++)
-        {
-            const player = players[index];
-            if (index == 0)
-            {
-                this.gamingPlayerNameLabel.string = player.acountName;
-                EventManager.Emit("SetRemoteSpriteFrame", "PlayerAvatar", player.id, this.gamingPlayerHeadIcon, player.avatarUrl);
-                this.gamingIconGlow1.enabled = player.id == gamingPlayerId;
-            } else
-            {
-                this.gamingPlayerNameLabel2.string = player.acountName;
-                EventManager.Emit("SetRemoteSpriteFrame", "PlayerAvatar", player.id, this.gamingPlayerHeadIcon2, player.avatarUrl);
-                this.gamingIconGlow2.enabled = player.id == gamingPlayerId;
-            }
-        }
-
-
+        // for (let index = 0; index < players.length; index++)
+        // {
+        //     const player = players[index];
+        //     if (index == 0)
+        //     {
+        //         this.gamingPlayerNameLabel.string = player.acountName;
+        //         EventManager.Emit("SetRemoteSpriteFrame", "PlayerAvatar", player.id, this.gamingPlayerHeadIcon, player.avatarUrl);
+        //         this.gamingIconGlow1.enabled = player.id == gamingPlayerId;
+        //     } else
+        //     {
+        //         this.gamingPlayerNameLabel2.string = player.acountName;
+        //         EventManager.Emit("SetRemoteSpriteFrame", "PlayerAvatar", player.id, this.gamingPlayerHeadIcon2, player.avatarUrl);
+        //         this.gamingIconGlow2.enabled = player.id == gamingPlayerId;
+        //     }
+        // }
 
     }
 
@@ -193,21 +184,8 @@ export class FingerMarbleUIController extends Component
         Validator.IsObjectIllegal(this.canvasReferences, "canvasReferences");
 
         // this.descriptionDlg = this.canvasReferences.GetNode("GameDescriptionDlg");
-        // this.settingDlg = this.canvasReferences.GetNode("GameSettingDlg");
-
+        this.settingDlg = this.canvasReferences.GetNode("GameSettingDlg");
         // this.boardClock = this.canvasReferences.GetVisual<BoardClock>("BoardClock", BoardClock);
-        // this.gameNameLabel = this.canvasReferences.GetVisual<Label>("LeftArrawButton/GameName", Label);
-        // this.gameNameLabel.string = "趣味桌球";
-        // this.lineNode = this.canvasReferences.GetNode("ScreenTable/BallPanel/Line");
-        // this.lineNode.active = false;
-        // this.gamingPlayerNameLabel = this.canvasReferences.GetVisual<Label>("ClientPlayer/PlayerAvatar/Name", Label);
-        // this.gamingPlayerHeadIcon = this.canvasReferences.GetVisual<Sprite>("ClientPlayer/PlayerAvatar/Mask/HeadIcon", Sprite);
-        // this.gamingIconGlow1 = this.canvasReferences.GetVisual<Sprite>("ClientPlayer/PlayerAvatar/Sprite", Sprite);
-
-        // this.gamingPlayerNameLabel2 = this.canvasReferences.GetVisual<Label>("ClientPlayer/PlayerAvatar2/Name", Label);
-        // this.gamingPlayerHeadIcon2 = this.canvasReferences.GetVisual<Sprite>("ClientPlayer/PlayerAvatar2/Mask/HeadIcon", Sprite);
-        // this.gamingIconGlow2 = this.canvasReferences.GetVisual<Sprite>("ClientPlayer/PlayerAvatar2/Sprite", Sprite);
-
         this.camera = this.canvasReferences.GetVisual<Camera>("Camera", Camera);
         var ballNodes: Node[] = this.canvasReferences.GetNode("ScreenTable/Balls").children;
         for (let index = 0; index < ballNodes.length; index++)

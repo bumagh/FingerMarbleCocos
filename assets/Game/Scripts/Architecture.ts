@@ -6,6 +6,7 @@ import { Validator } from '../../Libraries/Utility/Validator';
 import { OnSelfEnterRoomPipeline } from '../../Framework/PartyTemplate/Room/Pipelines/OnSelfEnterRoomPipeline';
 import { UpdatePlayerUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pipelines/UpdatePlayerUIPipeline';
 import { UpdateSubgameUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pipelines/UpdateSubgameUIPipeline';
+import { IntBilStartPipeline } from './Game/Pipelines/IntBilStartPipeline';
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -122,7 +123,7 @@ export class Architecture extends Component
         new UpdatePlayerUIPipeline().OnEnable();
 
         new UpdateSubgameUIPipeline().OnEnable();
-        // new IntBilStartPipeline().OnEnable();
+        new IntBilStartPipeline().OnEnable();
         // new IntBilGamingPipeline().OnEnable();
         // new IntBilEndPipeline().OnEnable();
         PipelineScheduleFunction.scheduleOnce = (callback: any, delay?: number) => this.scheduleOnce(callback, delay);
