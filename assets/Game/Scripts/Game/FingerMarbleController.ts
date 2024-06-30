@@ -227,7 +227,7 @@ export class FingerMarbleController extends SubgameController
         {
             this.subgame.touchStarted = false;
             //同步本地到其他玩家
-            this.gameUIController.StartPushCue(this.subgameId, true);
+            this.gameUIController.StartPushCue(true,event.getLocation());
             return;
         }
         if (this.subgame.state != SubgameState.Gaming) return;
@@ -238,7 +238,8 @@ export class FingerMarbleController extends SubgameController
         EventManager.Emit("InterestingBilliardAudioPlay", BilliardAudioState.CuePush);
         this.subgame.touchStarted = false;
         //同步本地到其他玩家
-        this.gameUIController.StartPushCue(this.subgameId, true);
+        this.gameUIController.StartPushCue(true,event.getLocation());
+
 
     }
 
@@ -435,7 +436,6 @@ export class FingerMarbleController extends SubgameController
 
         //给球设置头像和UI
         this.gameUIController.boardClock.SetClockState(true, this.subgame.maxCueSettingTime);
-        this.gameUIController.SetGamingPlayerInfo(this.subgame.partialPlayerList.FindAll(pp => (this.subgame.tempData.gamingPlayerIds.find(id => id == pp.id) != undefined)), this.subgame.tempData.gamingPlayerId);
     }
 
     protected SubgameOnGameEnd(context: GameEndContext): void
@@ -507,7 +507,9 @@ export class FingerMarbleController extends SubgameController
     private IntBilSyncTouchEnd(data: SyncTouchEndData)
     {
         this.subgame.touchStarted = false;
-        this.gameUIController.StartPushCue(this.subgameId, false, data.mainBallForce);
+        // this.gameUIController.StartPushCue(this.subgameId, false, data.mainBallForce);
+        // this.gameUIController.StartPushCue(true,event.getLocation(),data.mainBallForce);
+
         EventManager.Emit("InterestingBilliardAudioPlay", BilliardAudioState.CuePush);
     }
 
@@ -654,7 +656,6 @@ export class FingerMarbleController extends SubgameController
         EventManager.Emit("IntBilGamingPipeline", this.subgameId);
         if (context.isClientPlayerGaming)
             this.ClientOnGaming();
-        this.gameUIController.SetGamingPlayerInfo(this.subgame.partialPlayerList.FindAll(pp => pp.state == PlayerState.Gaming), this.subgame.tempData.gamingPlayerId);
         context.StageComplete();
     }
     protected ClientOnGaming(): void

@@ -96,7 +96,6 @@ export class FingerMarbleTeamBoard extends NodeReferences
         horizPlayer.ChangePlayerState(player.state, isHost);
         // EventManager.Emit("SetRemoteSpriteFrame", "PlayerAvatar", player.id, horizPlayer.iconSprite, player.avatarUrl);
         horizPlayer.SetActive(true);
-        Debug.Log("SetHorizPlayer after")
     }
 
 }

@@ -44,7 +44,6 @@ export class PlayerController implements IEntity
 
     private PlayerOnSelfEnterRoom(context: OnSelfEnterRoomContext): void
     {
-        Debug.Log("PlayerOnSelfEnterRoom")
         if (this.player.id != sys.localStorage.getItem("ClientPlayerId")) return;
         if (Validator.IsObjectIllegal(context, "OnEnterRoomContext")) return;
         if (Validator.IsObjectIllegal(context.response, "response")) return;
