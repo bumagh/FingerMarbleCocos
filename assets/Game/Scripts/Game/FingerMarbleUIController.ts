@@ -101,7 +101,6 @@ export class FingerMarbleUIController extends Component
     {
         this.scheduleOnce(() =>
         {
-            this.mainBall.SetBigDamp();
             this.subBalls.items.forEach(subBall =>
             {
                 subBall.SetBigDamp();
@@ -160,6 +159,8 @@ export class FingerMarbleUIController extends Component
      */
     public ShowCueSetting(touchPos: Vec2, lineActive: boolean = true)
     {
+        this.UpdateSubBalls();
+
         this.SetLineNodeEnable(false);
         this.cueNode.node.active = true;
         this.cueNode.SetCueState(touchPos, this.subBalls.items[0].node.worldPosition, this.camera, this.subBalls.items[0].node.worldPosition);
@@ -173,10 +174,12 @@ export class FingerMarbleUIController extends Component
         this.UpdateSubBalls();
         for (let i = 0; i < players.length; i++)
         {
+            if(this.subBalls.Find(item=>item.playerId == players[i].id) != undefined) continue;
             var newBall: Node = instantiate(this.marbleBall);
             this.ballsParent.addChild(newBall);
             var fingerMarbleBall = newBall.getComponent<FingerMarbleBall>(FingerMarbleBall);
             fingerMarbleBall.name = players[i].acountName;
+            fingerMarbleBall.stateLabel.string = players[i].acountName;
             fingerMarbleBall.playerId = players[i].id;
             fingerMarbleBall.SetRandPos();
         }
@@ -334,7 +337,7 @@ export class FingerMarbleUIController extends Component
     public UpdateSubBalls()
     {
         var ballNodes: Node[] = this.canvasReferences.GetNode("ScreenTable/Balls").children;
-        this.ballsParent.removeAllChildren();
+        // this.ballsParent.removeAllChildren();
         this.subBalls.Clear();
         for (let index = 0; index < ballNodes.length; index++)
         {

@@ -2,10 +2,11 @@ import { CCBoolean, CircleCollider2D, Collider2D, Color, Component, Label, Node,
 import { Gender } from '../Common/Enums';
 import { PlayerState } from '../../../Framework/PartyTemplate/Player/Player';
 import { Algorithm } from '../../../Libraries/Utility/Algorithm';
+import { NodeReferences } from '../Common/NodeReferences';
 const { ccclass, property } = _decorator;
 
 @ccclass("FingerMarbleBall")
-export class FingerMarbleBall extends Component
+export class FingerMarbleBall extends NodeReferences
 {
     @property(Sprite)
     public avatarSprite: Sprite;
@@ -34,6 +35,7 @@ export class FingerMarbleBall extends Component
     public isFall: boolean = false;
     protected onLoad(): void
     {
+        this.stateLabel = this.GetVisual("Label",Label);
     }
 
     protected start(): void
@@ -43,7 +45,6 @@ export class FingerMarbleBall extends Component
         if (this.playerId == null && this.isMainBall == false)
             this.outLineMaskNode.active = false;
         if (this.isMainBall) return;
-        this.stateLabel = this.node.getComponentInChildren<Label>(Label);
         this.defaultSpriteColor = this.avatarSprite.color;
     }
     public SetBigDamp()
