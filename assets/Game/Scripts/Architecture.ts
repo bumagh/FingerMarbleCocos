@@ -8,6 +8,7 @@ import { UpdatePlayerUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pi
 import { UpdateSubgameUIPipeline } from '../../Framework/PartyTemplate/Subgame/Pipelines/UpdateSubgameUIPipeline';
 import { IntBilStartPipeline } from './Game/Pipelines/IntBilStartPipeline';
 import { OnOtherEnterRoomPipeline } from '../../Framework/PartyTemplate/Room/Pipelines/OnOtherEnterRoomPipeline';
+import { UpdateRoomHostPipeline } from '../../Framework/PartyTemplate/Room/Pipelines/UpdateRoomHostPipeline';
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -123,6 +124,7 @@ export class Architecture extends Component
         
         new UpdatePlayerUIPipeline().OnEnable();
 
+        new UpdateRoomHostPipeline().OnEnable();
         new UpdateSubgameUIPipeline().OnEnable();
         new IntBilStartPipeline().OnEnable();
         // new IntBilGamingPipeline().OnEnable();

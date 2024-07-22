@@ -4,6 +4,7 @@ import { Validator } from "../../../../Libraries/Utility/Validator";
 import { EventManager } from "../../../../Libraries/Utility/EventManager";
 import { IAccountName, IAvatarUrl, IClientPlayerId, IGameId, IHostId, IPlayerId, ISubgameState } from "../../Interfaces";
 import { SubgameState } from "../../Subgame/Subgame";
+import { Debug } from "../../../../Libraries/Utility/Debug";
 
 export class UpdateRoomHostContext extends PipelineContext
     implements IGameId, IHostId, IClientPlayerId, ISubgameState, IPlayerId, IAccountName, IAvatarUrl

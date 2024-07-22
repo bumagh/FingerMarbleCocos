@@ -38,7 +38,6 @@ export class FingerMarbleController extends SubgameController
     private moveCounter: number = 0;
     private lastMoveTimeCounter: number = 0;
     private countDownTimerId: number = 0;//倒计时的计时器id
-    private subBallFallPos: Vec3 = new Vec3();
     private MOVE_SYNC_RATE: number = 2;//触控同步频率
     private MAXTIMER = 65;
     protected onLoad(): void

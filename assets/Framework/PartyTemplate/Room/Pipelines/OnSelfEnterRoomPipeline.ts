@@ -50,11 +50,14 @@ export class OnSelfEnterRoomPipeline extends Pipeline<OnSelfEnterRoomContext>
         this.AddStage("RoomOnSelfEnterGame");
         this.AddStage("SubgameOnSelfEnterGame");
         this.AddStage("ArcadeOnSelfEnterRoom");
-       
         this.AddCallback(() =>
         {
             // ReturnButton 显示小游戏的名称
             EventManager.Emit("ShowSubgameName", this.context.subgameNameCN);
+             // ReadyButton 设置准备按钮的gameId
+             EventManager.Emit("SetReadyButtonGameId", this.context.gameId);
+             // RankListDlg 设置排行榜的gameId
+            //  EventManager.Emit("SetRankListDlgGameId", this.context.gameId);
             return true;
         });
         // PlayerController 检查本机玩家是否能够游玩此游戏

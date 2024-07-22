@@ -69,7 +69,7 @@ export class ReadyButton extends Component implements IGameId
     public OnTouchEvent(event: EventTouch): void
     {
         Debug.Log("点击了准备按钮");
-        EventManager.Emit("OnReadyButtonTouched", this);
+        // EventManager.Emit("OnReadyButtonTouched", this); //声音
         if (Validator.IsStringEmpty(this.customOnTouchEvent))
             EventManager.Emit("SelfPreparePipeline");
         else
@@ -81,6 +81,8 @@ export class ReadyButton extends Component implements IGameId
      */
     private IsGameIdIncorrect(gameId: string): boolean
     {
+        Debug.Log("gameId");
+        Debug.Log(gameId);
         if (Validator.IsStringIllegal(this.gameId, "this.gameId")) return true;
         if (Validator.IsStringIllegal(gameId, "gameId")) return true;
         return this.gameId != gameId;
